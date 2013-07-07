@@ -14,7 +14,7 @@ TOOL        = $(shell dirname `which arm-none-eabi-gcc`)
 TW_DIR      = ../../TivaWare
 
 # Location of a loader script, doesnt matter which one, they're the same
-LD_SCRIPT   = lm4f.ld
+LD_SCRIPT   = tm4c.ld
 
 # Object File Directory, keeps things tidy
 OBJECTS     = $(patsubst %.o, %.o, $(SOURCES:.c=.o))

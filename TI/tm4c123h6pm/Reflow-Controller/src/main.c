@@ -14,9 +14,6 @@
 #include "driverlib/timer.h"
 #include "driverlib/systick.h"
 #include "driverlib/interrupt.h"
-#include "utils/uartstdio.h"
-
-#define printf UARTprintf
 
 
 #define ON  0xFF
@@ -90,14 +87,11 @@ void ControlOven(void)
 
 static char debugCtr = 0;
 
-static char buf[32];
     
 void DebugOut(void)
 {
     // Print Data
-    sprintf(buf, "%f", thermocouple_temp);
-    printf("%s\r\n", buf);
-    //printf("%i\r\n", (thermocouple >> 18) & 0x1FFF);
+    printf("%.2f\r\n", thermocouple_temp);
 
     // Heartbeat
     if (debugCtr == 4)
@@ -126,9 +120,11 @@ int main(void)
     
     // UART
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
     GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+    UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 921600, (UART_CONFIG_PAR_NONE | UART_CONFIG_STOP_ONE | UART_CONFIG_WLEN_8));
 
-    UARTStdioConfig(0, 921600, SysCtlClockGet());
+    UARTEnable(UART0_BASE);
 
     
     // SPI

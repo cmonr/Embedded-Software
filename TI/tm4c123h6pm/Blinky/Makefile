@@ -14,15 +14,15 @@ TOOL        = $(shell dirname `which arm-none-eabi-gcc`)
 TW_DIR      = ../../TivaWare
 
 # Location of a loader script, doesnt matter which one, they're the same
-LD_SCRIPT   = lm4f.ld
+LD_SCRIPT   = tm4c.ld
 
 # Object File Directory, keeps things tidy
 OBJECTS     = $(patsubst %.o, %.o, $(SOURCES:.c=.o))
 ASMS        = $(patsubst %.s, %.s, $(SOURCES:.c=.s))
 
 # FPU Type
-#FPU          = hard
-FPU          = softfp
+FPU          = hard
+#FPU          = softfp
 
 # Remove # to enable verbose
 VERBOSE      = #1
