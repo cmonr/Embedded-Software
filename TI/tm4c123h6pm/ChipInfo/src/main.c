@@ -1,15 +1,15 @@
 #include <stdint.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <sys/types.h>
 #include "inc/hw_memmap.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/gpio.h"
 #include "driverlib/uart.h"
+#include "driverlib/fpu.h"
 #include "driverlib/rom.h"
 #include "driverlib/rom_map.h"
-#include "utils/uartstdio.h"
 
-#define printf UARTprintf
 
 void PrintMemoryLayout();
 char *GetSP();
@@ -21,10 +21,17 @@ int main(void)
 
 
     // UART
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+    UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 921600, (UART_CONFIG_PAR_NONE | UART_CONFIG_STOP_ONE | UART_CONFIG_WLEN_8));
+    
+    UARTEnable(UART0_BASE);
 
-    UARTStdioConfig(0, 921600, SysCtlClockGet());
+
+    // FPU
+    FPUEnable();
+    FPULazyStackingEnable();
 
 
     // Memory Layout Info
@@ -32,7 +39,7 @@ int main(void)
 
 
     // Sleep
-    MAP_SysCtlSleep();
+    SysCtlSleep();
 
 
     return 0;
@@ -65,6 +72,7 @@ void PrintMemoryLayout()
     extern char *heap_end;
     extern unsigned long _heap_top;
 
+    
     printf("_text          = 0x%X\r\n",      (unsigned int) &_text);
     printf("_etext         = 0x%X\r\n",      (unsigned int) &_etext);
     printf("Sizeof(.text)  = %d bytes\r\n",  (&_etext - &_text) * 4);
@@ -78,11 +86,11 @@ void PrintMemoryLayout()
     printf("Sizeof(.bss)   = %d bytes\r\n",  (&_ebss - &_bss) * 4);
     printf("---------------------------\r\n");
     printf("_heap_bottom   = 0x%X\r\n",      (unsigned int) &_heap_bottom);
-    //printf("_heap_end      = 0x%X",        (unsigned int) heap_end);
-    //printf(" : usage: %d\r\n",               (heap_end - (char *) &_heap_bottom));
-    //printf("_heap_top      = 0x%X\r\n",      (unsigned int) &_heap_top);
-    //printf("Sizeof(heap)   = %d bytes\r\n",  (&_heap_top - &_heap_bottom) * 4);
-    //printf("---------------------------\r\n");
+    printf("_heap_end      = 0x%X",        (unsigned int) heap_end);
+    printf(" : usage: %d\r\n",               (heap_end - (char *) &_heap_bottom));
+    printf("_heap_top      = 0x%X\r\n",      (unsigned int) &_heap_top);
+    printf("Sizeof(heap)   = %d bytes\r\n",  (&_heap_top - &_heap_bottom) * 4);
+    printf("---------------------------\r\n");
     printf("_stack_bottom  = 0x%X\r\n",      (unsigned int) &_stack_bottom);
     printf("StackPointer   = 0x%X",        (unsigned int) GetSP());
     printf(" : usage: %d\r\n",               ( (char *) &_stack_top - GetSP()));

@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include "inc/hw_memmap.h"
 #include "inc/hw_ints.h"
 #include "driverlib/sysctl.h"
@@ -89,10 +90,13 @@ void ControlOven(void)
 
 static char debugCtr = 0;
 
+static char buf[32];
+    
 void DebugOut(void)
 {
-    // Print Data  
-    printf("%f\r\n", thermocouple_temp);
+    // Print Data
+    sprintf(buf, "%f", thermocouple_temp);
+    printf("%s\r\n", buf);
     //printf("%i\r\n", (thermocouple >> 18) & 0x1FFF);
 
     // Heartbeat

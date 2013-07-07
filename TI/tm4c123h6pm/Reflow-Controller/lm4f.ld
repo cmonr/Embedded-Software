@@ -37,6 +37,8 @@
  *
  *****************************************************************************/
 
+_stack_size = 4K;
+
 MEMORY
 {
     FLASH (rx) : ORIGIN = 0x00000000, LENGTH = 0x00040000
@@ -69,4 +71,10 @@ SECTIONS
         *(COMMON)
         _ebss = .;
     } > SRAM
+
+    _heap_bottom = .;
+    _heap_top = ORIGIN(SRAM) + LENGTH(SRAM) - _stack_size;
+
+    _stack_bottom = _heap_top;
+    _stack_top = ORIGIN(SRAM) + LENGTH(SRAM);
 }
