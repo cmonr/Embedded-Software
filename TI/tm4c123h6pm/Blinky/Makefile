@@ -167,7 +167,7 @@ dirs:
 
 # Cleanup
 clean:
-	$(RM) bin
+	$(RM) bin src/*.o src/*.d
 
 # Flash The Board
 flash: all
