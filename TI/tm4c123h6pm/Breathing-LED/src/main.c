@@ -42,8 +42,8 @@ int main(void)
     // Timer/PWM
     SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER1);
     TimerConfigure(TIMER1_BASE, TIMER_CFG_SPLIT_PAIR | TIMER_CFG_A_PWM);
-    TimerLoadSet(TIMER1_BASE, TIMER_A, period -1); // Period (cycles)
-    TimerMatchSet(TIMER1_BASE, TIMER_A, 0);     // Duty Cycle (% on)
+    TimerLoadSet(TIMER1_BASE, TIMER_A, period - 1); // Period (cycles)
+    TimerMatchSet(TIMER1_BASE, TIMER_A, period - 1);     // Duty Cycle (% on)
 
     TimerEnable(TIMER1_BASE, TIMER_A);
 
