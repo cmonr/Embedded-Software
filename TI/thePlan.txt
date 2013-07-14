@@ -1,0 +1,31 @@
+HW Functons
+  - TivaWare
+
+CoreLib
+  - Simple Peripheral Functions
+    - ADC, UART, SPI, I2C, Timers, etc...
+    - See universalair.co.uk/content/functions-reference for excellent example
+
+Drivers
+  - Code specific for ICs
+  - Examples
+    - AS5050 (SPI Encoders)
+    - PCA9557 (I2C IO Expander)
+    - RN-42 (UART Bluetooth)
+    - XBee (UART)
+    - DRV8800 (PWM Motor Controller)
+    - MPU6050 (I2C IMU)
+
+RoboLib
+  - Specific implementation of CoreLib & Drivers
+    - IR <- ADC
+    - Servos <- PWM
+    - Motors <- PWM & GPIO & PCA9557
+    - Encoders <- AS5050
+    - LEDs <- PWM
+    - MOSFETs <- PCA9557
+    - IO <- PCA9557
+    - XBee <- UART
+    - Bluetooth <- UART
+    - IMU <- MPU6050
+
