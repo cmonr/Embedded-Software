@@ -46,9 +46,9 @@ typedef enum
 
 typedef enum
 {
-  TWO = GPIO_STRENGTH_2MA,
-  FOUR = GPIO_STRENGTH_4MA,
-  EIGHT = GPIO_STRENGTH_8MA
+  TWO_MA = GPIO_STRENGTH_2MA,
+  FOUR_MA = GPIO_STRENGTH_4MA,
+  EIGHT_MA = GPIO_STRENGTH_8MA
 } tPinStrength, tPortStrength;
 
 typedef enum
