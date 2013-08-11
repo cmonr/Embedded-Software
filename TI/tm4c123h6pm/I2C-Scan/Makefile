@@ -2,7 +2,7 @@
 # Configuration Variables
 
 #Are you Jimmy?
-Jimmy-P	    := yes
+Jimmy-P	    := no
 
 #Taget Binary Name
 TARGET      := main
@@ -20,7 +20,7 @@ TOOL        := $(shell dirname `which arm-none-eabi-gcc`)
 ifeq (${Jimmy-P},yes)
 TW_DIR      := /opt/arm-2011.03
 else
-TWD_DIR	:=  ../../TivaWare
+TW_DIR	:=  ../../TivaWare
 endif
 
 # Location of a linker script, doesnt matter which one, they're the same
@@ -83,13 +83,13 @@ CFLAGS     += -fsingle-precision-constant
 ifeq (${Jimmy-P},yes)
 CFLAGS     += -I$(TW_DIR)/include -I$(INCLUDES)
 else
-CFLAGS     += -I$(TW_DIR)/inc -I$(INCLUDES)
+CFLAGS     += -I$(TW_DIR) -I$(INCLUDES)
 endif
 
 LIBS       += driver
-LIBS	   += m
-LIBS	   += c
-LIBS	   += gcc
+LIBS       += m
+LIBS       += c
+LIBS       += gcc
 
 LDFLAGS    += -T $(LD_SCRIPT)
 LDFLAGS    += -g
@@ -97,7 +97,8 @@ LDFLAGS    += -g
 ifeq ($(Jimmy-P),yes)
 LDFLAGS	   += -L ${TW_DIR}/lib/gcc/arm-none-eabi/4.5.2/
 else
-LDFLAGS	   += -L ${TW_DIR}/driverlib/gcc/
+LDFLAGS    += -L ${TW_DIR}/driverlib/gcc
+LDFLAGS    += -L /usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.1/
 endif
 
 ifeq (${FPU},hard)

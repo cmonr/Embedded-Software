@@ -1,10 +1,10 @@
 #include <sys/types.h>          //Needed for caddr_t
 #include <stdint.h>
 
-#include "inc/hw_memmap.h"      //Needed for GPIO Pins/UART base
-#include "inc/hw_types.h"       //Needed for SysTick Types
-#include "driverlib/rom.h"
-#include "driverlib/rom_map.h"
+#include <inc/hw_memmap.h>      //Needed for GPIO Pins/UART base
+#include <inc/hw_types.h>       //Needed for SysTick Types
+#include <driverlib/rom.h>
+#include <driverlib/rom_map.h>
 
 char *heap_end = 0;
 

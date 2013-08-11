@@ -3,17 +3,18 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "inc/hw_memmap.h"
-#include "inc/hw_ints.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/gpio.h"
-#include "driverlib/pin_map.h"
-#include "driverlib/uart.h"
-#include "driverlib/ssi.h"
-#include "driverlib/fpu.h"
-#include "driverlib/timer.h"
-#include "driverlib/systick.h"
-#include "driverlib/interrupt.h"
+
+#include <inc/hw_memmap.h>
+#include <inc/hw_ints.h>
+#include <driverlib/sysctl.h>
+#include <driverlib/gpio.h>
+#include <driverlib/pin_map.h>
+#include <driverlib/uart.h>
+#include <driverlib/ssi.h>
+#include <driverlib/fpu.h>
+#include <driverlib/timer.h>
+#include <driverlib/systick.h>
+#include <driverlib/interrupt.h>
 
 
 #define ON  0xFF
@@ -233,6 +234,7 @@ int main(void)
         unsigned short delay[] = {90, 120, 20, 300};
         short i;
 
+        
         for(i=0; i<4; i++)
         {
             printf("\r\n");

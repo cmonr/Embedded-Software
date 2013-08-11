@@ -2,13 +2,13 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <sys/types.h>
-#include "inc/hw_memmap.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/gpio.h"
-#include "driverlib/uart.h"
-#include "driverlib/fpu.h"
-#include "driverlib/rom.h"
-#include "driverlib/rom_map.h"
+#include <inc/hw_memmap.h>
+#include <driverlib/sysctl.h>
+#include <driverlib/gpio.h>
+#include <driverlib/uart.h>
+#include <driverlib/fpu.h>
+#include <driverlib/rom.h>
+#include <driverlib/rom_map.h>
 
 
 void PrintMemoryLayout();

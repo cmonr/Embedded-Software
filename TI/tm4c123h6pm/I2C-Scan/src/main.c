@@ -3,14 +3,14 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "inc/hw_memmap.h"
-#include "driverlib/debug.h"
-#include "driverlib/gpio.h"
-#include "driverlib/uart.h"
-#include "driverlib/i2c.h"
-#include "driverlib/rom.h"
-#include "driverlib/pin_map.h"
-#include "driverlib/sysctl.h"
+#include <inc/hw_memmap.h>
+#include <driverlib/debug.h>
+#include <driverlib/gpio.h>
+#include <driverlib/uart.h>
+#include <driverlib/i2c.h>
+#include <driverlib/rom.h>
+#include <driverlib/pin_map.h>
+#include <driverlib/sysctl.h>
 
 
 int i;
