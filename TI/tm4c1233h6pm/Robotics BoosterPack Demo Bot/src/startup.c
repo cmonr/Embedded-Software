@@ -2,12 +2,15 @@
 #include "driverlib/fpu.h"
 
 void ResetISR(void);
-static void NmiSR(void);
-static void FaultISR(void);
-static void IntDefaultHandler(void);
+void NmiSR(void);
+void FaultISR(unsigned int * hardfault_args);
+void IntDefaultHandler(void);
 
 extern int main(void);
+extern void PortAIntHandler(void);
 extern void PortDIntHandler(void);
+extern void UART1IntHandler(void);
+extern void ADC0SS0IntHandler(void);
 extern void WTimer5AIntHandler(void);
 extern void WTimer5BIntHandler(void);
 
@@ -27,7 +30,7 @@ __attribute__ ((section(".isr_vector")))void (* const g_pfnVectors[])(void) =
     (void (*)(void))((unsigned long) &_stack_top),
     ResetISR,                               // The reset handler
     NmiSR,                                  // The NMI handler
-    FaultISR,                               // The hard fault handler
+    (void (*)(void)) FaultISR,                               // The hard fault handler
     IntDefaultHandler,                      // The MPU fault handler
     IntDefaultHandler,                      // The bus fault handler
     IntDefaultHandler,                      // The usage fault handler
@@ -40,13 +43,13 @@ __attribute__ ((section(".isr_vector")))void (* const g_pfnVectors[])(void) =
     0,                                      // Reserved
     IntDefaultHandler,                      // The PendSV handler
     IntDefaultHandler,                      // The SysTick handler
-    IntDefaultHandler,                      // GPIO Port A
+    PortAIntHandler,                        // GPIO Port A
     IntDefaultHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
     PortDIntHandler,                        // GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
     IntDefaultHandler,                      // UART0 Rx and Tx
-    IntDefaultHandler,                      // UART1 Rx and Tx
+    UART1IntHandler,                        // UART1 Rx and Tx
     IntDefaultHandler,                      // SSI0 Rx and Tx
     IntDefaultHandler,                      // I2C0 Master and Slave
     IntDefaultHandler,                      // PWM Fault
@@ -54,7 +57,7 @@ __attribute__ ((section(".isr_vector")))void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // PWM Generator 1
     IntDefaultHandler,                      // PWM Generator 2
     IntDefaultHandler,                      // Quadrature Encoder 0
-    IntDefaultHandler,                      // ADC Sequence 0
+    ADC0SS0IntHandler,                      // ADC Sequence 0
     IntDefaultHandler,                      // ADC Sequence 1
     IntDefaultHandler,                      // ADC Sequence 2
     IntDefaultHandler,                      // ADC Sequence 3
@@ -138,12 +141,12 @@ __attribute__ ((section(".isr_vector")))void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Wide Timer 0 subtimer B
     IntDefaultHandler,                      // Wide Timer 1 subtimer A
     IntDefaultHandler,                      // Wide Timer 1 subtimer B
-    IntDefaultHandler,                       // Wide Timer 2 subtimer A
-    IntDefaultHandler,                       // Wide Timer 2 subtimer B
-    IntDefaultHandler,                       // Wide Timer 3 subtimer A
-    IntDefaultHandler,                       // Wide Timer 3 subtimer B
-    IntDefaultHandler,                       // Wide Timer 4 subtimer A
-    IntDefaultHandler,                       // Wide Timer 4 subtimer B
+    IntDefaultHandler,                      // Wide Timer 2 subtimer A
+    IntDefaultHandler,                      // Wide Timer 2 subtimer B
+    IntDefaultHandler,                      // Wide Timer 3 subtimer A
+    IntDefaultHandler,                      // Wide Timer 3 subtimer B
+    IntDefaultHandler,                      // Wide Timer 4 subtimer A
+    IntDefaultHandler,                      // Wide Timer 4 subtimer B
     WTimer5AIntHandler,                     // Wide Timer 5 subtimer A
     WTimer5BIntHandler,                     // Wide Timer 5 subtimer B
     IntDefaultHandler,                      // FPU
@@ -204,24 +207,55 @@ void ResetISR(void)
           "        blt     zero_loop");
 
     // FPU
-    FPULazyStackingEnable();
+    FPUStackingEnable();
     FPUEnable();
 
     // Main
     main();
 }
 
-static void NmiSR(void)
+void NmiSR(void)
 {
     while(1);
 }
 
-static void FaultISR(void)
-{
-    while(1);
+
+
+__attribute__((naked))
+ void FaultISR( unsigned int * hardfault_args ){
+  __asm(" .syntax unified\n"
+    "movs r0, #4\n"
+    "mov r1, lr\n"
+    "tst r0, r1\n"
+    "beq _MSP\n"
+    "MRS r0, PSP\n"
+    "B Hardfault_HandlerC\n"
+  "_MSP:\n"
+    "MRS r0, msp\n"
+    "B Hardfault_HandlerC\n");
 }
 
-static void IntDefaultHandler(void)
+void Hardfault_HandlerC(unsigned long *hardfault_args){
+  volatile unsigned long stacked_r0 = hardfault_args[0];
+  volatile unsigned long stacked_r1 = hardfault_args[1];
+  volatile unsigned long stacked_r2 = hardfault_args[2];
+  volatile unsigned long stacked_r3 = hardfault_args[3];
+  volatile unsigned long stacked_r12 = hardfault_args[4];
+  volatile unsigned long stacked_lr = hardfault_args[5];
+  volatile unsigned long stacked_pc = hardfault_args[6];
+  volatile unsigned long stacked_psr = hardfault_args[7];
+  volatile unsigned long _CFSR = *((volatile unsigned long*) 0xE000ED28);
+  volatile unsigned long _HFSR = *((volatile unsigned long*) 0xE000ED2C);
+  volatile unsigned long _DFSR = *((volatile unsigned long*) 0xE000ED30);
+  volatile unsigned long _AFSR = *((volatile unsigned long*) 0xE000ED3C);
+  volatile unsigned long _BFAR = *((volatile unsigned long*) 0xE000ED38);
+  volatile unsigned long _MMAR = *((volatile unsigned long*) 0xE000ED34);
+  __asm("BKPT #0\n");
+}
+
+
+
+void IntDefaultHandler(void)
 {
     while(1);
 }
