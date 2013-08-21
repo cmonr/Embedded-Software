@@ -4,7 +4,8 @@ HW Functons
 CoreLib
   - Simple Peripheral Functions
     - ADC, UART, SPI, I2C, Timers, etc...
-    - See universalair.co.uk/content/functions-reference for excellent example
+    - IE: http://universalair.co.uk/content/functions-reference
+    - IE: http://mbed.org/handbook/Homepage
 
 Drivers
   - Code specific for ICs
