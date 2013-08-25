@@ -10,7 +10,6 @@
 
 #include "i2c.h"
 
-static unsigned char _i2c_addr;
 
 void I2CInit(void)
 {
@@ -30,35 +29,73 @@ void I2CInit(void)
     //IntEnable(INT_I2C0);
 }
 
-void I2CAddrSet(unsigned char addr)
+
+void I2CWrite(unsigned char addr, unsigned char *data, unsigned int len)
 {
-    _i2c_addr = addr;
-}
-
-void I2CWrite(unsigned char *data, unsigned int len)
-{
-    I2CMasterSlaveAddrSet(I2C0_BASE, _i2c_addr, false);
-    
-    switch(len)
-    {
-        case 1:
-          
-          break;
-        case 2:
-          I2CMasterDataPut(I2C0_BASE, data[0]);
-          I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_BURST_SEND_START);
-          while(I2CMasterBusy(I2C0_BASE));
-
-          //if (I2CMasterErr(I2C0_BASE) != 0)
-          //    return I2CMasterErr(I2C0_BASE); 
-          
-          I2CMasterDataPut(I2C0_BASE, data[1]);
-          I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_BURST_SEND_FINISH);
-          while(I2CMasterBusy(I2C0_BASE));
-
-          break;
-
+    I2CMasterSlaveAddrSet(I2C0_BASE, addr, false);
+    I2CMasterDataPut(I2C0_BASE, *data);
+    if (len == 1){
+        I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_SINGLE_SEND);
+        while(I2CMasterBusy(I2C0_BASE));
+        return;
     }
+
+    // Start sending consecutive data
+    I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_BURST_SEND_START);
+    while(I2CMasterBusy(I2C0_BASE));
+    len--;
+    data++;
+
+    // Continue sending consecutive data
+    while(len > 1){
+        I2CMasterDataPut(I2C0_BASE, *data);
+        I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_BURST_SEND_CONT);
+        while(I2CMasterBusy(I2C0_BASE));
+        len--;
+        data++;
+    }
+
+    // Send last piece of data
+    I2CMasterDataPut(I2C0_BASE, *data);
+    I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_BURST_SEND_FINISH);
+    while(I2CMasterBusy(I2C0_BASE));
 }
 
-void I2CRead(unsigned char *data, unsigned int len) {}
+
+void I2CRead(unsigned char addr, unsigned char* data, unsigned int len)
+{
+    if (len < 1)  // Assume I2C Recieving will always return data
+        return;
+
+    // Set address to read from
+    I2CMasterSlaveAddrSet(I2C0_BASE, addr >> 1, true);
+
+    // Check to see if pointer is to an array
+    if (len == 1){
+        I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_SINGLE_RECEIVE);
+        while(I2CMasterBusy(I2C0_BASE));
+        *data = I2CMasterDataGet(I2C0_BASE);
+        return;
+    }
+
+    // Begin reading consecutive data
+    I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_BURST_RECEIVE_START);
+    while(I2CMasterBusy(I2C0_BASE));
+    *data = I2CMasterDataGet(I2C0_BASE);
+    len--;
+    data++;
+
+    // Continue reading consecutive data
+    while(len > 1){
+        I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_BURST_RECEIVE_CONT);
+        while(I2CMasterBusy(I2C0_BASE));
+        *data = I2CMasterDataGet(I2C0_BASE);
+        len--;
+        data++;
+    }
+
+    // Read last character of data  
+    I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_BURST_RECEIVE_FINISH);
+    while(I2CMasterBusy(I2C0_BASE));
+    *data = I2CMasterDataGet(I2C0_BASE);
+}

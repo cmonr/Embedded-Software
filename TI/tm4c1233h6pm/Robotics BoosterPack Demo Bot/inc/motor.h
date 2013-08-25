@@ -1,4 +1,6 @@
-void initMotors(bool, bool, bool, bool );
+void initMotors( void );
+
+void invertMotor (unsigned char, bool );
 
 void enableMotors( bool );
 

@@ -12,26 +12,26 @@
 #include <driverlib/sysctl.h>
 
 //#include "adc.h"
-//#include "i2c.h"
-#include "servo.h"
-//#include "motor.h"
+#include "i2c.h"
+//#include "servo.h"
+#include "motor.h"
 //#include "encoder.h"
 
 
 #define toggleRed()   GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, ~GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_1))
 #define toggleBlue()  GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, ~GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_2))
 
-void (*UART1RXHandler)(unsigned char) = 0;
+//void (*UART1RXHandler)(unsigned char) = 0;
 
 void UART1IntHandler(void){
   volatile unsigned long status = UARTIntStatus(UART1_BASE, true);
 
-  while(UARTCharsAvail(UART1_BASE))
-      UART1RXHandler(UARTCharGet(UART1_BASE));
+  //while(UARTCharsAvail(UART1_BASE))
+  //    UART1RXHandler(UARTCharGet(UART1_BASE));
 
   UARTIntClear(UART1_BASE, status);
 }
-
+/*
 void UART1WriteChar(unsigned char c){ UARTCharPut(UART1_BASE, c); }
 void UART1Write(const unsigned char* buff, unsigned int len){
   while(len--)
@@ -42,9 +42,10 @@ void UART1Write(const unsigned char* buff, unsigned int len){
 void BluetoothRXHandler(unsigned char c)
 {
     UARTCharPut(UART0_BASE, c);
-}
+}*/
 
 
+unsigned char i2c_buff[2];
 
 int main(void)
 { 
@@ -68,7 +69,7 @@ int main(void)
    
 
     // UART (Bluetooth)
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
+    /*SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UART1);
 
     GPIOPinConfigure(GPIO_PB0_U1RX);
@@ -81,16 +82,23 @@ int main(void)
     UARTIntEnable(UART1_BASE, UART_INT_RX);
     IntEnable(INT_UART1);
     UARTEnable(UART1_BASE);
-    
+    */
 
-    //I2CInit();
+    I2CInit();
 
-    /*I2CInit();
-    I2CAddrSet(0x18);           // PCA9775
-    I2CWrite([0x03, 0x0F], 2);  // IO Direction
-    I2CWrite([0x02, 0x00], 2);  // IO Polarity
-    I2CWrite([0x01, 0x80 | 0x10], 2);  // Output H/L
-*/
+    // PCA9557
+    i2c_buff[0] = 0x03;
+    i2c_buff[1] = 0x00; // 0: Output   1: Input
+    I2CWrite(0x18, i2c_buff, 2);  // IO Direction
+
+    i2c_buff[0] = 0x02;
+    i2c_buff[1] = 0x00;
+    I2CWrite(0x18, i2c_buff, 2);  // IO Polarity
+
+    i2c_buff[0] = 0x01;
+    i2c_buff[1] = 0x8F | 0x10;
+    I2CWrite(0x18, i2c_buff, 2);  // Output H/L
+
     /*for(i=0; i<4; i++){
         I2CMasterSlaveAddrSet(I2C0_BASE, 0x18, false);
         I2CMasterDataPut(I2C0_BASE, 0x01);
@@ -105,16 +113,18 @@ int main(void)
     }*/
 
 
-    //initMotors();
-    initServos();
-    //initEncoders();
+    initMotors();
+    //initServos();
+    //initEncoders(false, false);
     //initLEDs();
 
     // Enable Interrupts
     IntMasterEnable();
 
 
-    while(1){
+    while(1)
+    {
+        char i;
         // LED On
         //toggleRed();
 
@@ -136,10 +146,25 @@ int main(void)
         while(I2CMasterBusy(I2C0_BASE));
         */
 
-        SysCtlDelay(SysCtlClockGet() / 3 / 2);
-        toggleRed();
+
         //UART1Write("A\r\n", 3);
-        UARTCharPut(UART1_BASE, 'B');
+        //UARTCharPut(UART1_BASE, 'B');
+
+        toggleRed();
+
+        for(i=9; i>=0; i++)
+        {
+            setMotor(0, 0.1*i);
+            SysCtlDelay(SysCtlClockGet() / 3 / 10);
+        }
+
+        toggleRed();
+
+        for(i=0; i<10; i++)
+        {
+            setMotor(0, 0.1*i);
+            SysCtlDelay(SysCtlClockGet() / 3 / 10);
+        }
 
         //printf("%d\r\n", (unsigned int) (((ADCRead(3) >> 4) - 45) * 0.45));
         //setServo(0, (((ADCRead(3) >> 4) - 45) * 0.45) / 100.0);

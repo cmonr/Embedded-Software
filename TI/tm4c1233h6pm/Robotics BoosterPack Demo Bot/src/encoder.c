@@ -23,6 +23,8 @@ static tFSMState FSM[4] = {
 };
 
 
+static int freq[4] = {0, 0, 0, 0};
+
 typedef struct{
     signed long value;
     tFSMState next;
@@ -34,7 +36,7 @@ void initEncoders(bool inv0, bool inv1)
 {
     // Encoders (Port D)
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_QEI0);
+    //SysCtlPeripheralEnable(SYSCTL_PERIPH_QEI0);
 
     // Unlock PD7
     HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
@@ -53,7 +55,6 @@ void initEncoders(bool inv0, bool inv1)
     GPIOPinTypeGPIOInput(GPIO_PORTA_BASE, GPIO_PIN_4 | GPIO_PIN_5);
     GPIOIntTypeSet(GPIO_PORTA_BASE, GPIO_PIN_4 | GPIO_PIN_5, GPIO_BOTH_EDGES);
     GPIOIntEnable(GPIO_PORTA_BASE, GPIO_PIN_4 | GPIO_PIN_5);
-
 
     IntEnable(INT_GPIOA);
 
@@ -86,10 +87,11 @@ void initEncoders(bool inv0, bool inv1)
 
 signed long readEnc(unsigned char num)
 {
-  if (num < 1)
+  if (num > 1)
     return 0;
   return _enc[num].value;
 }
+
 
 void PortAIntHandler(void)
 {
@@ -113,6 +115,8 @@ void PortDIntHandler(void)
     ndx = GPIOPinRead(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7) >> 6;
     _enc[1].value += _enc[1].next.out[ndx];
     _enc[1].next = FSM[ndx];
+
+    freq[ndx]++;
 
     // Ack Interrupt
     GPIOIntClear(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7);

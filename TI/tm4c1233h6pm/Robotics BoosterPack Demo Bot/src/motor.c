@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <math.h>
 #include <inc/hw_memmap.h>
 #include <driverlib/sysctl.h>
 #include <driverlib/gpio.h>
@@ -19,16 +20,26 @@ static const uint32_t _motor_timer_sets[4][2]=
   {WTIMER1_BASE, TIMER_B}
 };
 
+static const uint32_t _motor_gpio_sets[4][2]=
+{
+  {GPIO_PORTD_BASE, GPIO_PIN_0},
+  {GPIO_PORTD_BASE, GPIO_PIN_1},
+  {GPIO_PORTA_BASE, GPIO_PIN_6},
+  {GPIO_PORTA_BASE, GPIO_PIN_7}
+};
+
 volatile static bool _motor_inv[4];
 
-void initMotors(bool inv0, bool inv1, bool inv2, bool inv3)
+
+void initMotors()
 {
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
     GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE, GPIO_PIN_6 | GPIO_PIN_7);
     GPIOPinTypeGPIOOutput(GPIO_PORTD_BASE, GPIO_PIN_0 | GPIO_PIN_1);
-    
+   
+
     // PWM (Motors)
     SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER0);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER1);
@@ -59,9 +70,16 @@ void initMotors(bool inv0, bool inv1, bool inv2, bool inv3)
     GPIOPinWrite(GPIO_PORTD_BASE, GPIO_PIN_0 | GPIO_PIN_1, GPIO_PIN_0 | GPIO_PIN_1);
 }
 
+void invertMotor(unsigned char num, bool inv)
+{
+    //if (num > 3)
+    //    return;
+    //return;
+}
+
 void enableMotors(bool enable)
 {
-   // Set IO Expander bit
+    // Set IO Expander bit
 
 }
 
@@ -70,7 +88,8 @@ void setMotor(unsigned char num, float duty)
     if (num > 3)
        return;
 
-    // 0.5 = Midpoint
+    // TODO: Code breaks here when trying to use duty
 
-    //TimerMatchSet(_motor_timer_sets[a][0], _motor_timer_sets[a][1], SysCtlClockGet() / 10000 * b)
+    GPIOPinWrite(_motor_gpio_sets[num][0], _motor_gpio_sets[num][1], duty > 0.5 ? 0xFF : 0x00);
+    TimerMatchSet(_motor_timer_sets[num][0], _motor_timer_sets[num][1], (unsigned long) SysCtlClockGet() / 10000 * (fabs(2*duty-1)));
 }

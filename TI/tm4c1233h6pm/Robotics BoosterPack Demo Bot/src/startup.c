@@ -207,7 +207,7 @@ void ResetISR(void)
           "        blt     zero_loop");
 
     // FPU
-    FPUStackingEnable();
+    FPULazyStackingEnable();
     FPUEnable();
 
     // Main
@@ -222,7 +222,7 @@ void NmiSR(void)
 
 
 __attribute__((naked))
- void FaultISR( unsigned int * hardfault_args ){
+void FaultISR( unsigned int * hardfault_args ){
   __asm(" .syntax unified\n"
     "movs r0, #4\n"
     "mov r1, lr\n"
@@ -236,21 +236,21 @@ __attribute__((naked))
 }
 
 void Hardfault_HandlerC(unsigned long *hardfault_args){
-  volatile unsigned long stacked_r0 = hardfault_args[0];
-  volatile unsigned long stacked_r1 = hardfault_args[1];
-  volatile unsigned long stacked_r2 = hardfault_args[2];
-  volatile unsigned long stacked_r3 = hardfault_args[3];
-  volatile unsigned long stacked_r12 = hardfault_args[4];
-  volatile unsigned long stacked_lr = hardfault_args[5];
-  volatile unsigned long stacked_pc = hardfault_args[6];
-  volatile unsigned long stacked_psr = hardfault_args[7];
-  volatile unsigned long _CFSR = *((volatile unsigned long*) 0xE000ED28);
-  volatile unsigned long _HFSR = *((volatile unsigned long*) 0xE000ED2C);
-  volatile unsigned long _DFSR = *((volatile unsigned long*) 0xE000ED30);
-  volatile unsigned long _AFSR = *((volatile unsigned long*) 0xE000ED3C);
-  volatile unsigned long _BFAR = *((volatile unsigned long*) 0xE000ED38);
-  volatile unsigned long _MMAR = *((volatile unsigned long*) 0xE000ED34);
-  __asm("BKPT #0\n");
+    volatile unsigned long stacked_r0 = hardfault_args[0];
+    volatile unsigned long stacked_r1 = hardfault_args[1];
+    volatile unsigned long stacked_r2 = hardfault_args[2];
+    volatile unsigned long stacked_r3 = hardfault_args[3];
+    volatile unsigned long stacked_r12 = hardfault_args[4];
+    volatile unsigned long stacked_lr = hardfault_args[5];
+    volatile unsigned long stacked_pc = hardfault_args[6];
+    volatile unsigned long stacked_psr = hardfault_args[7];
+    volatile unsigned long _CFSR = *((volatile unsigned long*) 0xE000ED28);
+    volatile unsigned long _HFSR = *((volatile unsigned long*) 0xE000ED2C);
+    volatile unsigned long _DFSR = *((volatile unsigned long*) 0xE000ED30);
+    volatile unsigned long _AFSR = *((volatile unsigned long*) 0xE000ED3C);
+    volatile unsigned long _BFAR = *((volatile unsigned long*) 0xE000ED38);
+    volatile unsigned long _MMAR = *((volatile unsigned long*) 0xE000ED34);
+    __asm("BKPT #0\n");
 }
 
 
