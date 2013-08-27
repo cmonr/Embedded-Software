@@ -83,13 +83,27 @@ void enableMotors(bool enable)
 
 }
 
+/*float fabs(float num)
+{
+    if (num > 0)
+      return num;
+    return num * -1.0;
+}*/
 void setMotor(unsigned char num, float duty)
 {
+    float normalized_duty, pwm_period;
+  
     if (num > 3)
        return;
 
-    // TODO: Code breaks here when trying to use duty
+    // Normalize the desired duty with an equation
+    normalized_duty = 1 - fabs(duty * -2 + 1);
 
+    // Generate PWM Value
+    pwm_period = ((float) SysCtlClockGet()) / 10000 - 2;
+
+    // Do some magic!
     GPIOPinWrite(_motor_gpio_sets[num][0], _motor_gpio_sets[num][1], duty > 0.5 ? 0xFF : 0x00);
-    TimerMatchSet(_motor_timer_sets[num][0], _motor_timer_sets[num][1], (unsigned long) SysCtlClockGet() / 10000 * (fabs(2*duty-1)));
+    TimerMatchSet(_motor_timer_sets[num][0], _motor_timer_sets[num][1], ((unsigned long) pwm_period * normalized_duty) + 1);
 }
+

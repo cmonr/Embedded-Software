@@ -124,7 +124,7 @@ int main(void)
 
     while(1)
     {
-        char i;
+        unsigned int i;
         // LED On
         //toggleRed();
 
@@ -152,20 +152,24 @@ int main(void)
 
         toggleRed();
 
-        for(i=9; i>=0; i++)
+        for(i=0; i<=100; i++)
         {
-            setMotor(0, 0.1*i);
-            SysCtlDelay(SysCtlClockGet() / 3 / 10);
+            setMotor(0, 0.01 * i);
+            printf("%d\r\n", i);
+            SysCtlDelay(SysCtlClockGet() / 3 / 100);
         }
 
         toggleRed();
 
-        for(i=0; i<10; i++)
+        for(; i>0; i--)
         {
-            setMotor(0, 0.1*i);
-            SysCtlDelay(SysCtlClockGet() / 3 / 10);
+            setMotor(0, 0.01 * i);
+            printf("%d\r\n", i);
+            SysCtlDelay(SysCtlClockGet() / 3 / 100);
         }
 
+
+        
         //printf("%d\r\n", (unsigned int) (((ADCRead(3) >> 4) - 45) * 0.45));
         //setServo(0, (((ADCRead(3) >> 4) - 45) * 0.45) / 100.0);
 

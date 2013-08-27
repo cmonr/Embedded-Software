@@ -1,5 +1,7 @@
 #include <stdint.h>
-#include "driverlib/fpu.h"
+//#include "driverlib/fpu.h"
+#include "inc/hw_nvic.h"
+#include "inc/hw_types.h"
 
 void ResetISR(void);
 void NmiSR(void);
@@ -207,8 +209,9 @@ void ResetISR(void)
           "        blt     zero_loop");
 
     // FPU
-    FPULazyStackingEnable();
-    FPUEnable();
+    //FPUEnable();
+    //FPUStackingEnable();
+    HWREG(NVIC_CPAC) = ((HWREG(NVIC_CPAC) & ~(NVIC_CPAC_CP10_M | NVIC_CPAC_CP11_M)) | NVIC_CPAC_CP10_FULL | NVIC_CPAC_CP11_FULL);
 
     // Main
     main();
