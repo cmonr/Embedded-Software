@@ -21,29 +21,6 @@
 #define toggleRed()   GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, ~GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_1))
 #define toggleBlue()  GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, ~GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_2))
 
-//void (*UART1RXHandler)(unsigned char) = 0;
-
-void UART1IntHandler(void){
-  volatile unsigned long status = UARTIntStatus(UART1_BASE, true);
-
-  //while(UARTCharsAvail(UART1_BASE))
-  //    UART1RXHandler(UARTCharGet(UART1_BASE));
-
-  UARTIntClear(UART1_BASE, status);
-}
-/*
-void UART1WriteChar(unsigned char c){ UARTCharPut(UART1_BASE, c); }
-void UART1Write(const unsigned char* buff, unsigned int len){
-  while(len--)
-      UARTCharPut(UART1_BASE, *buff++);
-}
-
-
-void BluetoothRXHandler(unsigned char c)
-{
-    UARTCharPut(UART0_BASE, c);
-}*/
-
 
 unsigned char i2c_buff[2];
 
@@ -64,27 +41,12 @@ int main(void)
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
     GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
     UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200, (UART_CONFIG_PAR_NONE | UART_CONFIG_STOP_ONE | UART_CONFIG_WLEN_8));
-    
+
     UARTEnable(UART0_BASE);
+    UARTFIFODisable(UART0_BASE);
    
 
-    // UART (Bluetooth)
-    /*SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART1);
-
-    GPIOPinConfigure(GPIO_PB0_U1RX);
-    GPIOPinConfigure(GPIO_PB1_U1TX);
- 
-    GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
-    UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200, (UART_CONFIG_PAR_NONE | UART_CONFIG_STOP_ONE | UART_CONFIG_WLEN_8));
-    
-    UART1RXHandler = &BluetoothRXHandler;
-    UARTIntEnable(UART1_BASE, UART_INT_RX);
-    IntEnable(INT_UART1);
-    UARTEnable(UART1_BASE);
-    */
-
-    I2CInit();
+   /* I2CInit();
 
     // PCA9557
     i2c_buff[0] = 0x03;
@@ -98,7 +60,7 @@ int main(void)
     i2c_buff[0] = 0x01;
     i2c_buff[1] = 0x8F | 0x10;
     I2CWrite(0x18, i2c_buff, 2);  // Output H/L
-
+*/
     /*for(i=0; i<4; i++){
         I2CMasterSlaveAddrSet(I2C0_BASE, 0x18, false);
         I2CMasterDataPut(I2C0_BASE, 0x01);
@@ -113,10 +75,11 @@ int main(void)
     }*/
 
 
-    initMotors();
+    //initMotors();
     //initServos();
     //initEncoders(false, false);
     //initLEDs();
+    //initBluetooth();
 
     // Enable Interrupts
     IntMasterEnable();
@@ -124,7 +87,7 @@ int main(void)
 
     while(1)
     {
-        unsigned int i;
+        //unsigned int i;
         // LED On
         //toggleRed();
 
@@ -149,12 +112,20 @@ int main(void)
 
         //UART1Write("A\r\n", 3);
         //UARTCharPut(UART1_BASE, 'B');
+        
+        UART1WriteChar(UARTCharGet(UART0_BASE));
+        
+        //SysCtlDelay(SysCtlClockGet() / 3 / 10);
 
         toggleRed();
+       /* toggleRed();
 
         for(i=0; i<=100; i++)
         {
             setMotor(0, 0.01 * i);
+            setMotor(1, 0.01 * i);
+            setMotor(2, 0.01 * i);
+            setMotor(3, 0.01 * i);
             printf("%d\r\n", i);
             SysCtlDelay(SysCtlClockGet() / 3 / 100);
         }
@@ -164,9 +135,12 @@ int main(void)
         for(; i>0; i--)
         {
             setMotor(0, 0.01 * i);
+            setMotor(1, 0.01 * i);
+            setMotor(2, 0.01 * i);
+            setMotor(3, 0.01 * i);
             printf("%d\r\n", i);
             SysCtlDelay(SysCtlClockGet() / 3 / 100);
-        }
+        }*/
 
 
         
