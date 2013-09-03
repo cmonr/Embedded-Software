@@ -68,7 +68,7 @@ void I2CRead(unsigned char addr, unsigned char* data, unsigned int len)
         return;
 
     // Set address to read from
-    I2CMasterSlaveAddrSet(I2C0_BASE, addr >> 1, true);
+    I2CMasterSlaveAddrSet(I2C0_BASE, addr, true);
 
     // Check to see if pointer is to an array
     if (len == 1){

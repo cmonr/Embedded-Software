@@ -11,7 +11,7 @@ void IntDefaultHandler(void);
 extern int main(void);
 extern void PortAIntHandler(void);
 extern void PortDIntHandler(void);
-extern void UART1IntHandler(void);
+//extern void UART1IntHandler(void);
 extern void ADC0SS0IntHandler(void);
 extern void WTimer5AIntHandler(void);
 extern void WTimer5BIntHandler(void);
@@ -51,7 +51,7 @@ __attribute__ ((section(".isr_vector")))void (* const g_pfnVectors[])(void) =
     PortDIntHandler,                        // GPIO Port D
     IntDefaultHandler,                      // GPIO Port E
     IntDefaultHandler,                      // UART0 Rx and Tx
-    UART1IntHandler,                        // UART1 Rx and Tx
+    IntDefaultHandler,                      // UART1 Rx and Tx
     IntDefaultHandler,                      // SSI0 Rx and Tx
     IntDefaultHandler,                      // I2C0 Master and Slave
     IntDefaultHandler,                      // PWM Fault

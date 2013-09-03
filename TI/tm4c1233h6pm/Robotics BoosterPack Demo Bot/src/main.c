@@ -7,6 +7,7 @@
 #include <inc/hw_ints.h>
 #include <driverlib/gpio.h>
 #include <driverlib/uart.h>
+#include <driverlib/i2c.h>
 #include <driverlib/pin_map.h>
 #include <driverlib/interrupt.h>
 #include <driverlib/sysctl.h>
@@ -42,8 +43,8 @@ int main(void)
     GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
     UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200, (UART_CONFIG_PAR_NONE | UART_CONFIG_STOP_ONE | UART_CONFIG_WLEN_8));
 
-    UARTEnable(UART0_BASE);
-    UARTFIFODisable(UART0_BASE);
+    //UARTEnable(UART0_BASE);
+    //UARTFIFODisable(UART0_BASE);
    
 
    /* I2CInit();
@@ -61,18 +62,7 @@ int main(void)
     i2c_buff[1] = 0x8F | 0x10;
     I2CWrite(0x18, i2c_buff, 2);  // Output H/L
 */
-    /*for(i=0; i<4; i++){
-        I2CMasterSlaveAddrSet(I2C0_BASE, 0x18, false);
-        I2CMasterDataPut(I2C0_BASE, 0x01);
-        I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_SINGLE_SEND);
-        while(I2CMasterBusy(I2C0_BASE));
-
-        I2CMasterSlaveAddrSet(I2C0_BASE, 0x18, true);
-        I2CMasterControl(I2C0_BASE, I2C_MASTER_CMD_SINGLE_RECEIVE);
-        while(I2CMasterBusy(I2C0_BASE));
-
-        printf("x%0X\r\n", I2CMasterDataGet(I2C0_BASE));
-    }*/
+    I2CInit();
 
 
     //initMotors();
@@ -87,7 +77,7 @@ int main(void)
 
     while(1)
     {
-        //unsigned int i;
+        unsigned int i;
         // LED On
         //toggleRed();
 
@@ -113,11 +103,30 @@ int main(void)
         //UART1Write("A\r\n", 3);
         //UARTCharPut(UART1_BASE, 'B');
         
-        UART1WriteChar(UARTCharGet(UART0_BASE));
+        //UART1WriteChar(UARTCharGet(UART0_BASE));
         
-        //SysCtlDelay(SysCtlClockGet() / 3 / 10);
+       /* 
+        for (i=0; i<8; i++)
+        {
+            unsigned char tmp;  
+          
+            i2c_buff[0] = 0x84 | (i << 4);
+            I2CWrite(0x48, i2c_buff, 1);
+            if (I2CMasterErr(I2C0_BASE))
+                printf("Err: %d\r\n", (unsigned int) I2CMasterErr(I2C0_BASE));
+
+            I2CRead(0x48, &tmp, 1);
+            if (I2CMasterErr(I2C0_BASE))
+                printf("Err: %d\r\n", (unsigned int) I2CMasterErr(I2C0_BASE));
+
+
+            printf("% 3d ", tmp);
+        }*/
 
         toggleRed();
+
+        SysCtlDelay(SysCtlClockGet() / 3 / 10);
+      
        /* toggleRed();
 
         for(i=0; i<=100; i++)
