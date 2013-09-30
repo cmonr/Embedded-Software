@@ -94,11 +94,12 @@ LIBS       += gcc
 LDFLAGS    += -T $(LD_SCRIPT)
 LDFLAGS    += -g
 
+LDFLAGS    += -L ${TW_DIR}/driverlib/gcc
+
 ifeq ($(Jimmy-P),yes)
 LDFLAGS	   += -L ${TW_DIR}/lib/gcc/arm-none-eabi/4.5.2/
 else
-LDFLAGS    += -L ${TW_DIR}/driverlib/gcc
-LDFLAGS    += -L /usr/lib/gcc/x86_64-unknown-linux-gnu/4.8.1/
+LDFLAGS	   += -L /usr/lib/gcc/arm-none-eabi/4.8.1/
 endif
 
 ifeq (${FPU},hard)
