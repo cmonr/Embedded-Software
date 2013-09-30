@@ -12,11 +12,11 @@
 #include <driverlib/interrupt.h>
 #include <driverlib/sysctl.h>
 
-//#include "adc.h"
-#include "i2c.h"
-//#include "servo.h"
 #include "motor.h"
-//#include "encoder.h"
+#include "i2c.h"
+#include "encoder.h"
+//#include "servo.h"
+//#include "adc.h"
 
 
 #define toggleRed()   GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, ~GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_1))
@@ -27,6 +27,8 @@ unsigned char i2c_buff[2];
 
 int main(void)
 { 
+    unsigned int i = 0;
+
     // Clock (80MHz)
     SysCtlClockSet(SYSCTL_SYSDIV_5 | SYSCTL_USE_PLL | SYSCTL_XTAL_16MHZ | SYSCTL_OSC_MAIN);
     
@@ -43,11 +45,11 @@ int main(void)
     GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
     UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200, (UART_CONFIG_PAR_NONE | UART_CONFIG_STOP_ONE | UART_CONFIG_WLEN_8));
 
-    //UARTEnable(UART0_BASE);
+    UARTEnable(UART0_BASE);
     //UARTFIFODisable(UART0_BASE);
    
 
-   /* I2CInit();
+    I2CInit();
 
     // PCA9557
     i2c_buff[0] = 0x03;
@@ -59,27 +61,67 @@ int main(void)
     I2CWrite(0x18, i2c_buff, 2);  // IO Polarity
 
     i2c_buff[0] = 0x01;
-    i2c_buff[1] = 0x8F | 0x10;
+    i2c_buff[1] = 0x8F;
     I2CWrite(0x18, i2c_buff, 2);  // Output H/L
-*/
-    I2CInit();
 
 
-    //initMotors();
-    //initServos();
-    //initEncoders(false, false);
+
     //initLEDs();
+    initMotors();
+    initEncoders();
+    //initServos();
     //initBluetooth();
+    
+    invertMotor(0);
+    invertMotor(1);
+    invertEncoder(0);
+
+    
 
     // Enable Interrupts
     IntMasterEnable();
 
 
+    // Do some tests
+    setMotor(0, 0.85);
+    setMotor(1, 0.85);
+
+
     while(1)
     {
-        unsigned int i;
+
+        /*for(i=0; i<8; i++)
+            setServo(i, 0.2);
+
+        toggleRed();
+        SysCtlDelay(SysCtlClockGet() / 3);
+
+
+        for(i=0; i<8; i++)
+            setServo(i, 0.8);
+
+        toggleRed();
+        SysCtlDelay(SysCtlClockGet() / 3);
+*/
+        
+
         // LED On
-        //toggleRed();
+        toggleRed();
+
+        printf("0:% 6ld  1:% 6ld\r\n", readEnc(0), readEnc(1));
+
+        SysCtlDelay(SysCtlClockGet() / 3 / 5);
+
+
+        if (i == 10)  // 5 Seconds
+        {
+           i2c_buff[0] = 0x01;
+           i2c_buff[1] = 0x0F | 0x00;
+           I2CWrite(0x18, i2c_buff, 2);  // Output H/L
+        }
+
+        i++;
+
 
         /*I2CMasterSlaveAddrSet(I2C0_BASE, 0x18, false);  // Set Outputs Directions
         I2CMasterDataPut(I2C0_BASE, 0x01);             
@@ -123,10 +165,6 @@ int main(void)
             printf("% 3d ", tmp);
         }*/
 
-        toggleRed();
-
-        SysCtlDelay(SysCtlClockGet() / 3 / 10);
-      
        /* toggleRed();
 
         for(i=0; i<=100; i++)
@@ -181,4 +219,6 @@ int main(void)
         if( (I2CMasterDataGet(I2C0_BASE) & 0x01) != 0)
             toggleBlue();*/
     }
+
+
 }

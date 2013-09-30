@@ -3,14 +3,16 @@
 #include "inc/hw_nvic.h"
 #include "inc/hw_types.h"
 
+#define unused __attribute__((unused))
+
 void ResetISR(void);
 void NmiSR(void);
 void FaultISR(unsigned int * hardfault_args);
 void IntDefaultHandler(void);
 
 extern int main(void);
-extern void PortAIntHandler(void);
 extern void PortDIntHandler(void);
+extern void PortEIntHandler(void);
 //extern void UART1IntHandler(void);
 extern void ADC0SS0IntHandler(void);
 extern void WTimer5AIntHandler(void);
@@ -45,11 +47,11 @@ __attribute__ ((section(".isr_vector")))void (* const g_pfnVectors[])(void) =
     0,                                      // Reserved
     IntDefaultHandler,                      // The PendSV handler
     IntDefaultHandler,                      // The SysTick handler
-    PortAIntHandler,                        // GPIO Port A
+    IntDefaultHandler,                      // GPIO Port A
     IntDefaultHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
     PortDIntHandler,                        // GPIO Port D
-    IntDefaultHandler,                      // GPIO Port E
+    PortEIntHandler,                        // GPIO Port E
     IntDefaultHandler,                      // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
     IntDefaultHandler,                      // SSI0 Rx and Tx
@@ -239,20 +241,20 @@ void FaultISR( unsigned int * hardfault_args ){
 }
 
 void Hardfault_HandlerC(unsigned long *hardfault_args){
-    volatile unsigned long stacked_r0 = hardfault_args[0];
-    volatile unsigned long stacked_r1 = hardfault_args[1];
-    volatile unsigned long stacked_r2 = hardfault_args[2];
-    volatile unsigned long stacked_r3 = hardfault_args[3];
-    volatile unsigned long stacked_r12 = hardfault_args[4];
-    volatile unsigned long stacked_lr = hardfault_args[5];
-    volatile unsigned long stacked_pc = hardfault_args[6];
-    volatile unsigned long stacked_psr = hardfault_args[7];
-    volatile unsigned long _CFSR = *((volatile unsigned long*) 0xE000ED28);
-    volatile unsigned long _HFSR = *((volatile unsigned long*) 0xE000ED2C);
-    volatile unsigned long _DFSR = *((volatile unsigned long*) 0xE000ED30);
-    volatile unsigned long _AFSR = *((volatile unsigned long*) 0xE000ED3C);
-    volatile unsigned long _BFAR = *((volatile unsigned long*) 0xE000ED38);
-    volatile unsigned long _MMAR = *((volatile unsigned long*) 0xE000ED34);
+    unused volatile unsigned long stacked_r0 = hardfault_args[0];
+    unused volatile unsigned long stacked_r1 = hardfault_args[1];
+    unused volatile unsigned long stacked_r2 = hardfault_args[2];
+    unused volatile unsigned long stacked_r3 = hardfault_args[3];
+    unused volatile unsigned long stacked_r12 = hardfault_args[4];
+    unused volatile unsigned long stacked_lr = hardfault_args[5];
+    unused volatile unsigned long stacked_pc = hardfault_args[6];
+    unused volatile unsigned long stacked_psr = hardfault_args[7];
+    unused volatile unsigned long _CFSR = *((volatile unsigned long*) 0xE000ED28);
+    unused volatile unsigned long _HFSR = *((volatile unsigned long*) 0xE000ED2C);
+    unused volatile unsigned long _DFSR = *((volatile unsigned long*) 0xE000ED30);
+    unused volatile unsigned long _AFSR = *((volatile unsigned long*) 0xE000ED3C);
+    unused volatile unsigned long _BFAR = *((volatile unsigned long*) 0xE000ED38);
+    unused volatile unsigned long _MMAR = *((volatile unsigned long*) 0xE000ED34);
     __asm("BKPT #0\n");
 }
 
