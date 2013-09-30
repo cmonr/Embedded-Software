@@ -23,40 +23,42 @@ static tFSMState FSM[4] = {
 };
 
 
-static int freq[4] = {0, 0, 0, 0};
-
 typedef struct{
     signed long value;
     tFSMState next;
+    bool inv;
 } QEIEncoder;
 
 static QEIEncoder _enc[2];
 
-void initEncoders(bool inv0, bool inv1)
+void initEncoders()
 {
+    _enc[0].inv = false;
+    _enc[1].inv = false;
+
     // Encoders (Port D)
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
     //SysCtlPeripheralEnable(SYSCTL_PERIPH_QEI0);
 
     // Unlock PD7
-    HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
-    HWREG(GPIO_PORTD_BASE + GPIO_O_CR) = GPIO_PIN_7;
-    HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = 0;
+    //HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+    //HWREG(GPIO_PORTD_BASE + GPIO_O_CR) = GPIO_PIN_7;
+    //HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = 0;
 
-    GPIOPinTypeGPIOInput(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7);
-    GPIOIntTypeSet(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7, GPIO_BOTH_EDGES);
-    GPIOIntEnable(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7);
+    GPIOPinTypeGPIOInput(GPIO_PORTD_BASE, GPIO_PIN_2 | GPIO_PIN_3);
+    GPIOIntTypeSet(GPIO_PORTD_BASE, GPIO_PIN_2 | GPIO_PIN_3, GPIO_BOTH_EDGES);
+    GPIOIntEnable(GPIO_PORTD_BASE, GPIO_PIN_2 | GPIO_PIN_3);
   
     IntEnable(INT_GPIOD);
 
 
-    //  Encoders (Port A)
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-    GPIOPinTypeGPIOInput(GPIO_PORTA_BASE, GPIO_PIN_4 | GPIO_PIN_5);
-    GPIOIntTypeSet(GPIO_PORTA_BASE, GPIO_PIN_4 | GPIO_PIN_5, GPIO_BOTH_EDGES);
-    GPIOIntEnable(GPIO_PORTA_BASE, GPIO_PIN_4 | GPIO_PIN_5);
+    //  Encoders (Port E)
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
+    GPIOPinTypeGPIOInput(GPIO_PORTE_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+    GPIOIntTypeSet(GPIO_PORTE_BASE, GPIO_PIN_0 | GPIO_PIN_1, GPIO_BOTH_EDGES);
+    GPIOIntEnable(GPIO_PORTE_BASE, GPIO_PIN_0 | GPIO_PIN_1);
 
-    IntEnable(INT_GPIOA);
+    IntEnable(INT_GPIOE);
 
     
 
@@ -85,25 +87,25 @@ void initEncoders(bool inv0, bool inv1)
     */
 }
 
+
+void invertEncoder(unsigned char num)
+{
+  if (num > 1)
+    return;
+
+  _enc[num].inv = !(_enc[num].inv);
+}
+
+
 signed long readEnc(unsigned char num)
 {
   if (num > 1)
     return 0;
+  
+  if (_enc[num].inv)
+    return _enc[num].value * -1;
+
   return _enc[num].value;
-}
-
-
-void PortAIntHandler(void)
-{
-    unsigned char ndx;
-    
-    // QEI State Machine
-    ndx = GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_4 | GPIO_PIN_5) >> 4;
-    _enc[0].value += _enc[0].next.out[ndx];
-    _enc[0].next = FSM[ndx];
-
-    // Ack Interrupt
-    GPIOIntClear(GPIO_PORTA_BASE, GPIO_PIN_4 | GPIO_PIN_5);
 }
 
 
@@ -112,13 +114,25 @@ void PortDIntHandler(void)
     unsigned char ndx;
     
     // QEI State Machine
-    ndx = GPIOPinRead(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7) >> 6;
+    ndx = GPIOPinRead(GPIO_PORTD_BASE, GPIO_PIN_2 | GPIO_PIN_3) >> 2;
     _enc[1].value += _enc[1].next.out[ndx];
     _enc[1].next = FSM[ndx];
 
-    freq[ndx]++;
+    // Ack Interrupt
+    GPIOIntClear(GPIO_PORTD_BASE, GPIO_PIN_2 | GPIO_PIN_3);
+}
+
+void PortEIntHandler(void)
+{
+    unsigned char ndx;
+    
+    // QEI State Machine
+    ndx = GPIOPinRead(GPIO_PORTE_BASE, GPIO_PIN_0 | GPIO_PIN_1) >> 0;
+    _enc[0].value += _enc[0].next.out[ndx];
+    _enc[0].next = FSM[ndx];
 
     // Ack Interrupt
-    GPIOIntClear(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7);
+    GPIOIntClear(GPIO_PORTE_BASE, GPIO_PIN_0 | GPIO_PIN_1);
 }
+
 

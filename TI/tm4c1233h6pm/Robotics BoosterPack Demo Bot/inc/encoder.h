@@ -1,7 +1,9 @@
-void initEncoders( bool, bool );
+void initEncoders( void );
+
+void invertEncoder( unsigned char );
 
 signed long readEnc( unsigned char );
 
-void PortAIntHandler( void );
+void PortEIntHandler( void );
 
 void PortDIntHandler( void );
