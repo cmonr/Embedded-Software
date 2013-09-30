@@ -1,7 +1,7 @@
 void initMotors( void );
 
-void invertMotor (unsigned char, bool );
-
 void enableMotors( bool );
+
+void invertMotor ( unsigned char );
 
 void setMotor( unsigned char, float );

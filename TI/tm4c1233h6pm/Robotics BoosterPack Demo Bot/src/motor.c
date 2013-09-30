@@ -28,7 +28,7 @@ static const uint32_t _motor_gpio_sets[4][2]=
   {GPIO_PORTA_BASE, GPIO_PIN_7}
 };
 
-volatile static bool _motor_inv[4];
+volatile static bool _motor_inv[4] = {false};
 
 
 void initMotors()
@@ -58,7 +58,7 @@ void initMotors()
     TimerLoadSet(WTIMER1_BASE, TIMER_BOTH, SysCtlClockGet() / 10000); //10KHz
     TimerMatchSet(WTIMER1_BASE, TIMER_A, 1);
     TimerMatchSet(WTIMER1_BASE, TIMER_B, 1);
-    
+
     TimerEnable(WTIMER0_BASE, TIMER_A);
     TimerEnable(WTIMER0_BASE, TIMER_B);
     TimerEnable(WTIMER1_BASE, TIMER_A);
@@ -68,13 +68,16 @@ void initMotors()
     // Motors Fwd
     GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_6 | GPIO_PIN_7, GPIO_PIN_6 | GPIO_PIN_7);
     GPIOPinWrite(GPIO_PORTD_BASE, GPIO_PIN_0 | GPIO_PIN_1, GPIO_PIN_0 | GPIO_PIN_1);
+
+    
 }
 
-void invertMotor(unsigned char num, bool inv)
+void invertMotor(unsigned char num)
 {
-    //if (num > 3)
-    //    return;
-    //return;
+    if (num > 3)
+        return;
+
+    _motor_inv[num] = !(_motor_inv[num]);
 }
 
 void enableMotors(bool enable)
@@ -83,18 +86,16 @@ void enableMotors(bool enable)
 
 }
 
-/*float fabs(float num)
-{
-    if (num > 0)
-      return num;
-    return num * -1.0;
-}*/
 void setMotor(unsigned char num, float duty)
 {
     float normalized_duty, pwm_period;
   
     if (num > 3)
        return;
+
+    // Invert motor
+    if (_motor_inv[num])
+        duty = 1.0 - duty;
 
     // Normalize the desired duty with an equation
     normalized_duty = 1 - fabs(duty * -2 + 1);
