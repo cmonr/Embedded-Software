@@ -13,18 +13,20 @@
 typedef struct {
     unsigned long port;
     unsigned long pin;
+    float floor;
+    float range;
     float duty;
 } tServo;
 
 volatile tServo _servos[8] = {
-    {GPIO_PORTB_BASE, GPIO_PIN_6, 0.5},
-    {GPIO_PORTB_BASE, GPIO_PIN_7, 0.5},
-    {GPIO_PORTB_BASE, GPIO_PIN_4, 0.5},
-    {GPIO_PORTB_BASE, GPIO_PIN_5, 0.5},
-    {GPIO_PORTE_BASE, GPIO_PIN_4, 0.5},
-    {GPIO_PORTE_BASE, GPIO_PIN_5, 0.5},
-    {0, 0, 0.0},
-    {0, 0, 0.0}
+    {GPIO_PORTB_BASE, GPIO_PIN_6, 0, 1, 0.5},
+    {GPIO_PORTB_BASE, GPIO_PIN_7, 0, 1, 0.5},
+    {GPIO_PORTB_BASE, GPIO_PIN_4, 0, 1, 0.5},
+    {GPIO_PORTB_BASE, GPIO_PIN_5, 0, 1, 0.5},
+    {GPIO_PORTE_BASE, GPIO_PIN_4, 0, 1, 0.5},
+    {GPIO_PORTE_BASE, GPIO_PIN_5, 0, 1, 0.5},
+    {0, 0, 0, 1, 0.0},
+    {0, 0, 0, 1, 0.0}
 };
 
 volatile unsigned char _servoNdx = 0;
@@ -61,6 +63,15 @@ void setServo(unsigned char num, float duty)
     _servos[num].duty = duty;
 }
 
+void setServoLimits(unsigned char num, float low, float high)
+{
+    if (num > 5 || low > high || low < 0.0 || high > 1.0)
+        return;
+
+    _servos[num].floor = low;
+    _servos[num].range = high - low;
+}
+
 void WTimer5AIntHandler(void)
 {
     // Move to next Servo Pin
@@ -71,7 +82,7 @@ void WTimer5AIntHandler(void)
 
     // Set new servo value
     TimerDisable(WTIMER5_BASE, TIMER_B);
-    TimerLoadSet(WTIMER5_BASE, TIMER_B, SysCtlClockGet() / 50 / 8 * _servos[_servoNdx].duty);
+    TimerLoadSet(WTIMER5_BASE, TIMER_B, SysCtlClockGet() / 50 / 8 * (_servos[_servoNdx].duty * _servos[_servoNdx].range + _servos[_servoNdx].floor));
     TimerEnable(WTIMER5_BASE, TIMER_B);
 
 

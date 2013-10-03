@@ -1,5 +1,4 @@
 #include <stdint.h>
-//#include "driverlib/fpu.h"
 #include "inc/hw_nvic.h"
 #include "inc/hw_types.h"
 
@@ -34,7 +33,7 @@ __attribute__ ((section(".isr_vector")))void (* const g_pfnVectors[])(void) =
     (void (*)(void))((unsigned long) &_stack_top),
     ResetISR,                               // The reset handler
     NmiSR,                                  // The NMI handler
-    (void (*)(void)) FaultISR,                               // The hard fault handler
+    (void (*)(void)) FaultISR,              // The hard fault handler
     IntDefaultHandler,                      // The MPU fault handler
     IntDefaultHandler,                      // The bus fault handler
     IntDefaultHandler,                      // The usage fault handler
@@ -211,8 +210,6 @@ void ResetISR(void)
           "        blt     zero_loop");
 
     // FPU
-    //FPUEnable();
-    //FPUStackingEnable();
     HWREG(NVIC_CPAC) = ((HWREG(NVIC_CPAC) & ~(NVIC_CPAC_CP10_M | NVIC_CPAC_CP11_M)) | NVIC_CPAC_CP10_FULL | NVIC_CPAC_CP11_FULL);
 
     // Main

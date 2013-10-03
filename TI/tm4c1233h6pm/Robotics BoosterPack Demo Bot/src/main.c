@@ -1,4 +1,4 @@
-#define PART_TM4C1233H6PM 1
+//#define PART_TM4C1233H6PM 1
 
 #include <stdbool.h>
 #include <stdint.h>
@@ -12,10 +12,10 @@
 #include <driverlib/interrupt.h>
 #include <driverlib/sysctl.h>
 
-#include "motor.h"
-#include "i2c.h"
-#include "encoder.h"
-//#include "servo.h"
+//#include "motor.h"
+//#include "i2c.h"
+//#include "encoder.h"
+#include "servo.h"
 //#include "adc.h"
 
 
@@ -46,10 +46,10 @@ int main(void)
     UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 115200, (UART_CONFIG_PAR_NONE | UART_CONFIG_STOP_ONE | UART_CONFIG_WLEN_8));
 
     UARTEnable(UART0_BASE);
-    //UARTFIFODisable(UART0_BASE);
-   
-
-    I2CInit();
+    UARTFIFODisable(UART0_BASE);
+  
+    
+    /*I2CInit();
 
     // PCA9557
     i2c_buff[0] = 0x03;
@@ -63,50 +63,52 @@ int main(void)
     i2c_buff[0] = 0x01;
     i2c_buff[1] = 0x8F;
     I2CWrite(0x18, i2c_buff, 2);  // Output H/L
-
+*/
 
 
     //initLEDs();
-    initMotors();
-    initEncoders();
-    //initServos();
+    //initMotors();
+    //initEncoders();
+    initServos();
     //initBluetooth();
     
-    invertMotor(0);
-    invertMotor(1);
-    invertEncoder(0);
+    //invertMotor(0);
+    //invertMotor(1);
+    //invertEncoder(0);
 
     
+
+    // Do some tests
+    //setMotor(0, 0.85);
+    //setMotor(1, 0.85);
+    setServoLimits(5, 0.35, 0.85);
+
 
     // Enable Interrupts
     IntMasterEnable();
 
 
-    // Do some tests
-    setMotor(0, 0.85);
-    setMotor(1, 0.85);
-
-
     while(1)
     {
 
-        /*for(i=0; i<8; i++)
-            setServo(i, 0.2);
+        //for(i=0; i<12; i++)
+        //{
+            setServo(5, 0.0);
+            toggleRed();
+            SysCtlDelay(SysCtlClockGet());
+        //    printf("%d\r\n", i*5);
+            
+            setServo(5, 0.6);
+            toggleRed();
+            SysCtlDelay(SysCtlClockGet());
 
-        toggleRed();
-        SysCtlDelay(SysCtlClockGet() / 3);
+
+        //}
 
 
-        for(i=0; i<8; i++)
-            setServo(i, 0.8);
-
-        toggleRed();
-        SysCtlDelay(SysCtlClockGet() / 3);
-*/
-        
 
         // LED On
-        toggleRed();
+       /* toggleRed();
 
         printf("0:% 6ld  1:% 6ld\r\n", readEnc(0), readEnc(1));
 
@@ -121,7 +123,7 @@ int main(void)
         }
 
         i++;
-
+*/
 
         /*I2CMasterSlaveAddrSet(I2C0_BASE, 0x18, false);  // Set Outputs Directions
         I2CMasterDataPut(I2C0_BASE, 0x01);             
