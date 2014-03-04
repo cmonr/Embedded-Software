@@ -45,6 +45,11 @@ void initMotors()
 
 
     // Setup IO
+    // Unlock F0 Pin (NMI)
+    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+    HWREG(GPIO_PORTF_BASE + GPIO_O_CR)  |= GPIO_PIN_0;
+    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = 0;
+
     // PWM
     GPIOPinTypePWM(GPIO_PORTA_BASE, GPIO_PIN_6 | GPIO_PIN_7);
     GPIOPinTypePWM(GPIO_PORTD_BASE, GPIO_PIN_0 | GPIO_PIN_1);
@@ -52,13 +57,6 @@ void initMotors()
     GPIOPinConfigure(GPIO_PD1_M1PWM1);
     GPIOPinConfigure(GPIO_PA6_M1PWM2);
     GPIOPinConfigure(GPIO_PA7_M1PWM3);
-    
-    
-    // Unlock F0 Pin (NMI)
-    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
-    HWREG(GPIO_PORTF_BASE + GPIO_O_CR)  |= GPIO_PIN_0;
-    HWREG(GPIO_PORTF_BASE + GPIO_O_LOCK) = 0;
-
 
     // GPIO
     GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_0 | GPIO_PIN_4);
@@ -66,7 +64,8 @@ void initMotors()
     GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_0 | GPIO_PIN_4, GPIO_PIN_0 | GPIO_PIN_4);
     GPIOPinWrite(GPIO_PORTC_BASE, GPIO_PIN_4 | GPIO_PIN_7, GPIO_PIN_4 | GPIO_PIN_7);
 
-    // Setup PWM Generators
+
+    // Setup PWM Peripherals
     SysCtlPWMClockSet(SYSCTL_PWMDIV_64); // PWM Clock Divider
     pwm_period = SysCtlClockGet() / 64 / 25000 - 1; // 25KHz
 
