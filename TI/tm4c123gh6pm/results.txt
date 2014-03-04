@@ -42,3 +42,6 @@ Solenoid Tester
 
 SDCard Tester
 - DNE
+
+UART0 Bootloader Test
+- DNE
