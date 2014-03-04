@@ -19,16 +19,7 @@ IR Tester
 LED Tester
 - DNE
 
-Bluetotoh Tester
-- DNE
-
-XBee Tester
-- DNE
-
 I2C ISR Tester
-- DNE
-
-PCA9557 Tester
 - DNE
 
 MPU6050 Tester
@@ -37,11 +28,20 @@ MPU6050 Tester
 INA220 Tester
 - DNE
 
+PCA9557 Tester
+- DNE
+
 Solenoid Tester
 - DNE
 
-SDCard Tester
+Bluetotoh Tester
 - DNE
 
 UART0 Bootloader Test
+- DNE
+
+XBee Tester
+- DNE
+
+SDCard Tester
 - DNE
