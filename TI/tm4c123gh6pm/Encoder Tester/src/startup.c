@@ -10,8 +10,6 @@ void FaultISR(unsigned int * hardfault_args);
 void IntDefaultHandler(void);
 
 extern int main(void);
-extern void PortDIntHandler(void);
-extern void PortEIntHandler(void);
 extern void ADC0SS0IntHandler(void);
 extern void WTimer5AIntHandler(void);
 extern void WTimer5BIntHandler(void);
@@ -48,8 +46,8 @@ __attribute__ ((section(".isr_vector")))void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // GPIO Port A
     IntDefaultHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
-    PortDIntHandler,                        // GPIO Port D
-    PortEIntHandler,                        // GPIO Port E
+    IntDefaultHandler,                      // GPIO Port D
+    IntDefaultHandler,                      // GPIO Port E
     IntDefaultHandler,                      // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
     IntDefaultHandler,                      // SSI0 Rx and Tx

@@ -16,7 +16,7 @@
 
 #include "i2c.h"
 #include "motor.h"
-#include "qei.h"
+#include "encoder.h"
 
 
 #define toggleRed()    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, ~GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_1))
@@ -62,7 +62,7 @@ void init(void)
 
     //Encoders
     initEncoders();
-
+    invertEncoder(1);
 
     // Enable Interrupts
     IntMasterEnable();
