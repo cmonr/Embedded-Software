@@ -118,11 +118,11 @@ asm: $(ASMS)
 
 # Compiler Command (C++)
 bin/%.o: src/%.cpp
-	$(CPP) -c $(CFLAGS) -o $@ $< -MT $@ -MT ${@:.o=.s}
+	$(CPP) -c $(CFLAGS) -fno-rtti -fno-exceptions -o $@ $< -MT $@ -MT ${@:.o=.s}
 
 # Create Assembly (C++)
 bin/%.s: src/%.cpp
-	$(CPP) -S $(CFLAGS) -o $@ $< -MT ${@:.s=.o} -MT $@
+	$(CPP) -S $(CFLAGS) -fno-rtti -fno-exceptions -o $@ $< -MT ${@:.s=.o} -MT $@
 
 # Compiler Command (C)
 bin/%.o: src/%.c
