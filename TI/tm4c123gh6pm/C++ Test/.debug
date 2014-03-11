@@ -4,7 +4,7 @@
 OPENOCD_BOARD_DIR=/usr/share/openocd/scripts/board
 
 # start xterm with openocd in the background
-lxterminal -e openocd -f $OPENOCD_BOARD_DIR/ek-lm4f120xl.cfg &
+openocd -f $OPENOCD_BOARD_DIR/ek-lm4f232.cfg 1>/dev/null 2>/dev/null &
 
 # save the PID of the background process
 TERM_PID=$!

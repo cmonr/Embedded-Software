@@ -146,7 +146,7 @@ size: bin/$(TARGET).out
 	$(SIZE) $<
 
 clean:
-	$(RM) bin
+	$(RM) -r bin
 
 flash: all
 	$(FLASH) bin/$(TARGET).axf;                                              

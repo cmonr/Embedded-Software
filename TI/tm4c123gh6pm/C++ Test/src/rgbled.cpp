@@ -25,13 +25,13 @@ RGBLED::RGBLED()
     SysCtlPWMClockSet(SYSCTL_PWMDIV_64); // PWM Clock Divider
     _pwm_period = SysCtlClockGet() / 64 / 25000 - 1; // 25KHz
 
-    PWMGenConfigure(PWM1_BASE, PWM_GEN_2, PWM_GEN_MODE_DOWN);
+    PWMGenConfigure(PWM1_BASE, PWM_GEN_2, PWM_GEN_MODE_UP_DOWN);
     PWMGenPeriodSet(PWM1_BASE, PWM_GEN_2, _pwm_period);
     PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, 0);
     PWMOutputState(PWM1_BASE, PWM_OUT_5_BIT, true);
     PWMGenEnable(PWM1_BASE, PWM_GEN_2);
 
-    PWMGenConfigure(PWM1_BASE, PWM_GEN_3, PWM_GEN_MODE_DOWN);
+    PWMGenConfigure(PWM1_BASE, PWM_GEN_3, PWM_GEN_MODE_UP_DOWN);
     PWMGenPeriodSet(PWM1_BASE, PWM_GEN_3, _pwm_period);
     PWMPulseWidthSet(PWM1_BASE, PWM_OUT_6, 0);
     PWMPulseWidthSet(PWM1_BASE, PWM_OUT_7, 0);
@@ -39,8 +39,14 @@ RGBLED::RGBLED()
     PWMOutputState(PWM1_BASE, PWM_OUT_7_BIT, true);
     PWMGenEnable(PWM1_BASE, PWM_GEN_3);
 
+    // Invert PWM Outputs
+    PWMOutputInvert(PWM1_BASE, PWM_OUT_5_BIT, false);
+    PWMOutputInvert(PWM1_BASE, PWM_OUT_6_BIT, false);
+    PWMOutputInvert(PWM1_BASE, PWM_OUT_7_BIT, false);
+
     // Setup local variables
-    maxBrightness = 1.0;
+    maxBrightness = 0.3;
+    set(1,1,1);
 }
 
 void RGBLED::set(float r, float g, float b)
@@ -59,10 +65,14 @@ void RGBLED::set(float r, float g, float b)
         b = 0.0;
     else if (b > 1.0)
         b = 1.0;
-   
+    
+    r = (r*maxBrightness)*0.99 + 0.005;
+    b = (b*maxBrightness)*0.99 + 0.005;
+    g = (g*maxBrightness)*0.99 + 0.005;
+
 
     PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, _pwm_period * r);    // Red LED
-    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_6, _pwm_period * g);    // Green LED
-    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_7, _pwm_period * b);    // Blue LED
+    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_7, _pwm_period * g);    // Green LED
+    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_6, _pwm_period * b);    // Blue LED
 }
 

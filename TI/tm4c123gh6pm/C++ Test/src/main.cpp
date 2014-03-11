@@ -18,30 +18,27 @@
 
 RGBLED LEDs;
 
-void init(void)
+int main(void)
 {
     // Clock (80MHz)
     SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_XTAL_16MHZ | SYSCTL_OSC_MAIN);
     
     // Configure LEDs
-    LEDs.set(0.5, 0.5, 0.5);
-
+    LEDs = RGBLED();
+    
     // Enable Interrupts
     IntMasterEnable();
-}
-
-
-int main(void)
-{
-    init();
 
     while(1)
     {
-        LEDs.set(1.0, 0.0, 0.0);
-        delay(0.25);
-        LEDs.set(0.0, 1.0, 0.0);
-        delay(0.25);
-        LEDs.set(0.0, 0.0, 1.0);
-        delay(0.25);
+        LEDs.set(1.0, 0, 0);
+        delay(1);
+
+        LEDs.set(0, 1.0, 0);
+        delay(1);
+
+        LEDs.set(0, 0, 1.0);
+        delay(1);
     }
+
 }
