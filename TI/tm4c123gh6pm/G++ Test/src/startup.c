@@ -10,11 +10,6 @@ void FaultISR(unsigned int * hardfault_args);
 void IntDefaultHandler(void);
 
 extern int main(void);
-extern void PortDIntHandler(void);
-extern void PortEIntHandler(void);
-extern void ADC0SS0IntHandler(void);
-extern void WTimer5AIntHandler(void);
-extern void WTimer5BIntHandler(void);
 
 // Symbols Created by the Linker
 extern unsigned long _etext;
@@ -48,8 +43,8 @@ __attribute__ ((section(".isr_vector")))void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // GPIO Port A
     IntDefaultHandler,                      // GPIO Port B
     IntDefaultHandler,                      // GPIO Port C
-    PortDIntHandler,                        // GPIO Port D
-    PortEIntHandler,                        // GPIO Port E
+    IntDefaultHandler,                      // GPIO Port D
+    IntDefaultHandler,                      // GPIO Port E
     IntDefaultHandler,                      // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
     IntDefaultHandler,                      // SSI0 Rx and Tx
@@ -59,7 +54,7 @@ __attribute__ ((section(".isr_vector")))void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // PWM Generator 1
     IntDefaultHandler,                      // PWM Generator 2
     IntDefaultHandler,                      // Quadrature Encoder 0
-    ADC0SS0IntHandler,                      // ADC Sequence 0
+    IntDefaultHandler,                      // ADC Sequence 0
     IntDefaultHandler,                      // ADC Sequence 1
     IntDefaultHandler,                      // ADC Sequence 2
     IntDefaultHandler,                      // ADC Sequence 3
@@ -149,8 +144,8 @@ __attribute__ ((section(".isr_vector")))void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Wide Timer 3 subtimer B
     IntDefaultHandler,                      // Wide Timer 4 subtimer A
     IntDefaultHandler,                      // Wide Timer 4 subtimer B
-    WTimer5AIntHandler,                     // Wide Timer 5 subtimer A
-    WTimer5BIntHandler,                     // Wide Timer 5 subtimer B
+    IntDefaultHandler,                      // Wide Timer 5 subtimer A
+    IntDefaultHandler,                      // Wide Timer 5 subtimer B
     IntDefaultHandler,                      // FPU
     IntDefaultHandler,                      // PECI 0
     IntDefaultHandler,                      // LPC 0

@@ -12,32 +12,19 @@
 #include <driverlib/interrupt.h>
 #include <driverlib/sysctl.h>
 
-#include "led.h"
-
-
-#define toggleRed()    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, ~GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_1))
-#define toggleBlue()   GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, ~GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_2))
-#define toggleGreen()  GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, ~GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_3))
+#include "rgbled.h"
 
 #define delay(x)      SysCtlDelay(SysCtlClockGet() / 3 * x);
 
-
-LED led();
-
-unsigned char i2c_buff[2];
-
+RGBLED LEDs;
 
 void init(void)
 {
     // Clock (80MHz)
     SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_XTAL_16MHZ | SYSCTL_OSC_MAIN);
     
-    
-    // GPIO
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
-    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
-    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0);
-
+    // Configure LEDs
+    LEDs.set(0.5, 0.5, 0.5);
 
     // Enable Interrupts
     IntMasterEnable();
@@ -50,7 +37,11 @@ int main(void)
 
     while(1)
     {
-        toggleGreen();
-        delay(1);
+        LEDs.set(1.0, 0.0, 0.0);
+        delay(0.25);
+        LEDs.set(0.0, 1.0, 0.0);
+        delay(0.25);
+        LEDs.set(0.0, 0.0, 1.0);
+        delay(0.25);
     }
 }
