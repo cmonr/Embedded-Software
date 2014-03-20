@@ -10,6 +10,8 @@ void FaultISR(unsigned int * hardfault_args);
 void IntDefaultHandler(void);
 
 extern int main(void);
+extern void WTimer5AIntHandler(void);
+extern void WTimer5BIntHandler(void);
 
 // Symbols Created by the Linker
 extern unsigned long _etext;
@@ -144,8 +146,8 @@ __attribute__ ((section(".isr_vector")))void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // Wide Timer 3 subtimer B
     IntDefaultHandler,                      // Wide Timer 4 subtimer A
     IntDefaultHandler,                      // Wide Timer 4 subtimer B
-    IntDefaultHandler,                      // Wide Timer 5 subtimer A
-    IntDefaultHandler,                      // Wide Timer 5 subtimer B
+    WTimer5AIntHandler,                     // Wide Timer 5 subtimer A
+    WTimer5BIntHandler,                     // Wide Timer 5 subtimer B
     IntDefaultHandler,                      // FPU
     IntDefaultHandler,                      // PECI 0
     IntDefaultHandler,                      // LPC 0

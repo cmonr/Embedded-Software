@@ -1,9 +1,9 @@
-class SERVO
+class Servo
 {
     public:
         unsigned int _pwm_period;
 
-        SERVO ( unsigned int, unsigned int );
+        Servo ( unsigned int, unsigned int );
 
         void set( float );
         void setLimits( float, float );
@@ -18,7 +18,7 @@ class SERVO
         float _range;
 };
 
-extern SERVO servo0,
+extern Servo servo0,
              servo1,
              servo2,
              servo3,

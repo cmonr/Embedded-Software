@@ -14,16 +14,25 @@
 
 #include "led.h"
 #include "servo.h"
+#include "softservo.h"
 
 #define delay(x)      SysCtlDelay(SysCtlClockGet() / 3 * x);
 
 extern LED rLED, gLED, bLED;
-extern SERVO servo0,
+extern Servo servo0,
              servo1,
              servo2,
              servo3,
              servo4,
              servo5;
+
+extern SoftServo servo6,
+                 servo7,
+                 servo8,
+                 servo9,
+                 servo10,
+                 servo11;
+
 
 int main(void)
 {
@@ -62,6 +71,8 @@ int main(void)
     //servo0.setType();
     servo2.setLimits(0.2, 0.7);
     servo0.set(0.4);
+
+    initSoftServos();
 /*
     // Use ALL Pins for Servos
     initExtraServos();

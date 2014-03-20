@@ -8,20 +8,20 @@
 
 #include "servo.h"
 
-SERVO servo0(PWM_OUT_0, PWM_OUT_0_BIT),
+Servo servo0(PWM_OUT_0, PWM_OUT_0_BIT),
       servo1(PWM_OUT_1, PWM_OUT_1_BIT),
       servo2(PWM_OUT_2, PWM_OUT_2_BIT),
       servo3(PWM_OUT_3, PWM_OUT_3_BIT),
       servo4(PWM_OUT_4, PWM_OUT_4_BIT),
       servo5(PWM_OUT_5, PWM_OUT_5_BIT);
 
-SERVO::SERVO(unsigned int pwm_out, unsigned int pwm_out_bit)
+Servo::Servo(unsigned int pwm_out, unsigned int pwm_out_bit)
 {
     _pwm_out = pwm_out;
     _pwm_out_bit = pwm_out_bit;
 }
 
-void SERVO::set(float duty)
+void Servo::set(float duty)
 {
     // Bounds check
     if (duty < 0)
@@ -40,7 +40,7 @@ void SERVO::set(float duty)
     PWMPulseWidthSet(PWM0_BASE, _pwm_out, _pwm_period * duty / 8.0);
 }
 
-void SERVO::setLimits(float min, float max)
+void Servo::setLimits(float min, float max)
 {
     // Disable servo while configuring
     enable(false);
@@ -53,13 +53,19 @@ void SERVO::setLimits(float min, float max)
     set(0.5);
 }
 
-void SERVO::invert()
+void Servo::invert()
 {
+    //Disable servo while configuring
+    enable(false);
+
     // Invert servo direction
     _invert = !_invert;
+
+    // Reset to neutral position 
+    set(0.5);
 }
 
-void SERVO::enable(bool enable)
+void Servo::enable(bool enable)
 {
     // Enable PWM Output to Pin
     PWMOutputState(PWM0_BASE, _pwm_out_bit, enable);
