@@ -8,17 +8,13 @@
 
 #include "servo.h"
 
-Servo servo0(PWM_OUT_0, PWM_OUT_0_BIT),
-      servo1(PWM_OUT_1, PWM_OUT_1_BIT),
-      servo2(PWM_OUT_2, PWM_OUT_2_BIT),
-      servo3(PWM_OUT_3, PWM_OUT_3_BIT),
-      servo4(PWM_OUT_4, PWM_OUT_4_BIT),
-      servo5(PWM_OUT_5, PWM_OUT_5_BIT);
-
 Servo::Servo(unsigned int pwm_out, unsigned int pwm_out_bit)
 {
     _pwm_out = pwm_out;
     _pwm_out_bit = pwm_out_bit;
+    _pwm_period = SysCtlClockGet() / 64 / 50 - 1;
+
+    setLimits(0, 1);
 }
 
 void Servo::set(float duty)
@@ -43,7 +39,7 @@ void Servo::set(float duty)
 void Servo::setLimits(float min, float max)
 {
     // Disable servo while configuring
-    enable(false);
+    disable();
 
     // Calculate internal variables
     _offset = min;
@@ -56,7 +52,7 @@ void Servo::setLimits(float min, float max)
 void Servo::invert()
 {
     //Disable servo while configuring
-    enable(false);
+    disable();
 
     // Invert servo direction
     _invert = !_invert;
@@ -65,10 +61,16 @@ void Servo::invert()
     set(0.5);
 }
 
-void Servo::enable(bool enable)
+void Servo::enable()
 {
     // Enable PWM Output to Pin
-    PWMOutputState(PWM0_BASE, _pwm_out_bit, enable);
+    PWMOutputState(PWM0_BASE, _pwm_out_bit, true);
+}
+
+void Servo::disable()
+{
+    // Enable PWM Output to Pin
+    PWMOutputState(PWM0_BASE, _pwm_out_bit, false);
 }
 
 
@@ -99,15 +101,10 @@ void initServos()
     PWMGenConfigure(PWM0_BASE, PWM_GEN_0, PWM_GEN_MODE_DOWN);
     PWMGenConfigure(PWM0_BASE, PWM_GEN_1, PWM_GEN_MODE_DOWN);
     PWMGenConfigure(PWM0_BASE, PWM_GEN_2, PWM_GEN_MODE_DOWN);
+
     PWMGenPeriodSet(PWM0_BASE, PWM_GEN_0, pwm_period);
     PWMGenPeriodSet(PWM0_BASE, PWM_GEN_1, pwm_period);
     PWMGenPeriodSet(PWM0_BASE, PWM_GEN_2, pwm_period);
-    
-    
-    // Enable PWM
-    PWMGenEnable(PWM0_BASE, PWM_GEN_0);
-    PWMGenEnable(PWM0_BASE, PWM_GEN_1);
-    PWMGenEnable(PWM0_BASE, PWM_GEN_2);
    
 
     // Disable PWM Outputs
@@ -117,21 +114,11 @@ void initServos()
     PWMOutputState(PWM0_BASE, PWM_OUT_3_BIT, false);
     PWMOutputState(PWM0_BASE, PWM_OUT_4_BIT, false);
     PWMOutputState(PWM0_BASE, PWM_OUT_5_BIT, false);
+   
 
-
-    // Finish init of objects
-    servo0._pwm_period = pwm_period;
-    servo1._pwm_period = pwm_period;
-    servo2._pwm_period = pwm_period;
-    servo3._pwm_period = pwm_period;
-    servo4._pwm_period = pwm_period;
-    servo5._pwm_period = pwm_period;
-
-    servo0.set(0.5);
-    servo1.set(0.5);
-    servo2.set(0.5);
-    servo3.set(0.5);
-    servo4.set(0.5);
-    servo5.set(0.5);
+    // Enable PWM
+    PWMGenEnable(PWM0_BASE, PWM_GEN_0);
+    PWMGenEnable(PWM0_BASE, PWM_GEN_1);
+    PWMGenEnable(PWM0_BASE, PWM_GEN_2);
 }
 

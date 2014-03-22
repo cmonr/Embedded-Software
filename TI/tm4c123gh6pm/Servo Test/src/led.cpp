@@ -10,14 +10,13 @@
 
 #define MAX_LED_BRIGHTNESS 0.3
 
-LED rLED(PWM_OUT_5, PWM_OUT_5_BIT),
-    bLED(PWM_OUT_7, PWM_OUT_7_BIT), 
-    gLED(PWM_OUT_6, PWM_OUT_6_BIT);
-
 LED::LED(unsigned int pwm_out, unsigned int pwm_out_bit)
 {
     _pwm_out = pwm_out;
     _pwm_out_bit = pwm_out_bit;
+    _pwm_period = SysCtlClockGet() / 64 / 25000 - 1;
+    
+    set(1.0);
 }
 
 void LED::set(float duty)
@@ -32,9 +31,14 @@ void LED::set(float duty)
     PWMPulseWidthSet(PWM1_BASE, _pwm_out, _pwm_period * duty);
 }
 
-void LED::enable(bool enable)
+void LED::enable()
 {
-    PWMOutputState(PWM1_BASE,_pwm_out_bit, enable);
+    PWMOutputState(PWM1_BASE, _pwm_out_bit, true);
+}
+
+void LED::disable()
+{
+    PWMOutputState(PWM1_BASE, _pwm_out_bit, false);
 }
 
 
@@ -42,44 +46,44 @@ void initLEDs()
 {
     unsigned int pwm_period;  
 
-    // Turn on Peripherals
+    // Power Peripherals
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM1);
 
-
-    // PWM
+    // Initialize PWM IO
     GPIOPinTypePWM(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
     GPIOPinConfigure(GPIO_PF1_M1PWM5);
     GPIOPinConfigure(GPIO_PF2_M1PWM6);
     GPIOPinConfigure(GPIO_PF3_M1PWM7);
 
 
-    // Setup PWM Peripherals
+    // Setup PWM Peripheral
     SysCtlPWMClockSet(SYSCTL_PWMDIV_64); // PWM Clock Divider
     pwm_period = SysCtlClockGet() / 64 / 25000 - 1; // 25KHz
 
-    PWMGenConfigure(PWM1_BASE, PWM_GEN_2, PWM_GEN_MODE_UP_DOWN);
+    
+    PWMGenConfigure(PWM1_BASE, PWM_GEN_2, PWM_GEN_MODE_DOWN);
+    PWMGenConfigure(PWM1_BASE, PWM_GEN_3, PWM_GEN_MODE_DOWN);
+    
     PWMGenPeriodSet(PWM1_BASE, PWM_GEN_2, pwm_period);
-    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, pwm_period);
-    PWMOutputState(PWM1_BASE, PWM_OUT_5_BIT, true);
-    PWMGenEnable(PWM1_BASE, PWM_GEN_2);
-
-    PWMGenConfigure(PWM1_BASE, PWM_GEN_3, PWM_GEN_MODE_UP_DOWN);
     PWMGenPeriodSet(PWM1_BASE, PWM_GEN_3, pwm_period);
-    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_6, pwm_period);
-    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_7, pwm_period);
-    PWMOutputState(PWM1_BASE, PWM_OUT_6_BIT, true);
-    PWMOutputState(PWM1_BASE, PWM_OUT_7_BIT, true);
-    PWMGenEnable(PWM1_BASE, PWM_GEN_3);
+
+    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5, 0);
+    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_6, 0);
+    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_7, 0);
 
     // Invert PWM Outputs
     PWMOutputInvert(PWM1_BASE, PWM_OUT_5_BIT, false);
     PWMOutputInvert(PWM1_BASE, PWM_OUT_6_BIT, false);
     PWMOutputInvert(PWM1_BASE, PWM_OUT_7_BIT, false);
 
-    // Finish init of objects
-    rLED._pwm_period = pwm_period;
-    gLED._pwm_period = pwm_period;
-    bLED._pwm_period = pwm_period;
+    // Disable PWM Outputs by default
+    PWMOutputState(PWM1_BASE, PWM_OUT_5_BIT, false);
+    PWMOutputState(PWM1_BASE, PWM_OUT_6_BIT, false);
+    PWMOutputState(PWM1_BASE, PWM_OUT_7_BIT, false);
+
+    // Enable PWM Generators
+    PWMGenEnable(PWM1_BASE, PWM_GEN_2);
+    PWMGenEnable(PWM1_BASE, PWM_GEN_3);
 }
 

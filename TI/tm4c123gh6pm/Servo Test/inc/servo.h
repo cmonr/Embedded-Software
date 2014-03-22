@@ -8,7 +8,8 @@ class Servo
         void set( float );
         void setLimits( float, float );
         void invert( void );
-        void enable( bool );
+        void enable( void );
+        void disable( void );
 
     private:
         unsigned int _pwm_out;
@@ -17,12 +18,5 @@ class Servo
         float _offset;
         float _range;
 };
-
-extern Servo servo0,
-             servo1,
-             servo2,
-             servo3,
-             servo4,
-             servo5;
 
 void initServos( void );
