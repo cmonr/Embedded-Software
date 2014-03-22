@@ -15,7 +15,7 @@
 
 #include "led.h"
 #include "servo.h"
-//#include "softservo.h"
+#include "softservo.h"
 
 #define delay(x)      SysCtlDelay(SysCtlClockGet() / 3 * x);
 
@@ -71,7 +71,7 @@ int main(void)
     Servo servo4 = Servo(PWM_OUT_4, PWM_OUT_4_BIT);
     Servo servo5 = Servo(PWM_OUT_5, PWM_OUT_5_BIT);
 
-    // Cascade initialize
+    // Cascade Servo Initalization
     //  Limit sudden power draw
     servo0.enable();
     delay(0.25);
@@ -86,13 +86,41 @@ int main(void)
     servo5.enable();
     delay(0.25);
 
-    //initSoftServos();
+    
+    // Initialize Soft Servos
+    initSoftServos();
+
+    SoftServo servo6 = SoftServo(GPIO_PORTD_BASE, GPIO_PIN_2);
+    SoftServo servo7 = SoftServo(GPIO_PORTD_BASE, GPIO_PIN_3);
+    SoftServo servo8 = SoftServo(GPIO_PORTE_BASE, GPIO_PIN_0);
+    SoftServo servo9 = SoftServo(GPIO_PORTE_BASE, GPIO_PIN_1);
+    SoftServo servo10 = SoftServo(GPIO_PORTE_BASE, GPIO_PIN_2);
+    SoftServo servo11 = SoftServo(GPIO_PORTE_BASE, GPIO_PIN_3);
+    
+    // Attach SoftServo Objects to SoftServo Generator
+    attachSoftServo(&servo6);
+    attachSoftServo(&servo7);
+    attachSoftServo(&servo8);
+    attachSoftServo(&servo9);
+    attachSoftServo(&servo10);
+    attachSoftServo(&servo11);
+
+    // Cascase Servo Initalization
+    servo6.enable();
+    delay(0.25);
+    servo7.enable();
+    delay(0.25);
+    servo8.enable();
+    delay(0.25);
+    servo9.enable();
+    delay(0.25);
+    servo10.enable();
+    delay(0.25);
+    servo11.enable();
+    delay(0.25);
+
+
 /*
-    // Use ALL Pins for Servos
-    initExtraServos();
-    servo7.set();
-
-
     // Initialize IMU (MPU6050)
     initMPU6050();
     // ... Add more functions ...
@@ -114,6 +142,12 @@ int main(void)
         servo3.set(0.6);
         servo4.set(0.6);
         servo5.set(0.6);
+        servo6.set(0.6);
+        servo7.set(0.6);
+        servo8.set(0.6);
+        servo9.set(0.6);
+        servo10.set(0.6);
+        servo11.set(0.6);
 
         delay(1);
         rLED.set(0);
@@ -123,5 +157,11 @@ int main(void)
         servo3.set(0.4);
         servo4.set(0.4);
         servo5.set(0.4);
+        servo6.set(0.4);
+        servo7.set(0.4);
+        servo8.set(0.4);
+        servo9.set(0.4);
+        servo10.set(0.4);
+        servo11.set(0.4);
     }
 }

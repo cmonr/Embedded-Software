@@ -10,19 +10,15 @@
 
 #include "softservo.h"
 
-SoftServo servo6(GPIO_PORTD_BASE, GPIO_PIN_2),
-          servo7(GPIO_PORTD_BASE, GPIO_PIN_3),
-          servo8(GPIO_PORTE_BASE, GPIO_PIN_0),
-          servo9(GPIO_PORTE_BASE, GPIO_PIN_1),
-          servo10(GPIO_PORTE_BASE, GPIO_PIN_2),
-          servo11(GPIO_PORTE_BASE, GPIO_PIN_3);
-
 SoftServo dummySoftServo(0, 0);
 
 SoftServo::SoftServo(unsigned int port, unsigned int pin)
 {
     _port = port;
     _pin = pin;
+    _pwm_period = SysCtlClockGet() / 50 / 8 - 1;
+
+    setLimits(0, 1);
 }
 
 void SoftServo::set(float duty)
@@ -48,7 +44,7 @@ void SoftServo::set(float duty)
 void SoftServo::setLimits(float min, float max)
 {
     // Disable servo while configuring
-    enable(false);
+    disable();
 
     // Calculate internal variables
     _offset = min;
@@ -61,7 +57,7 @@ void SoftServo::setLimits(float min, float max)
 void SoftServo::invert()
 {
     // Disable servo while configuring
-    enable(false);
+    disable();
 
     // Invert servo direction
     _invert = !_invert;
@@ -70,19 +66,19 @@ void SoftServo::invert()
     set(0.5);
 }
 
-void SoftServo::enable(bool enable)
+void SoftServo::enable()
 {
-    if (enable == true)
-    {
-        // Enable IO
-        GPIOPinTypeGPIOOutput(_port, _pin);
-        GPIOPinWrite(_port, _pin, 0);
-    }else{
-        // Disable IO
-        GPIOPinTypeGPIOInput(_port, _pin);
-    }
+    // Enable IO
+    GPIOPinTypeGPIOOutput(_port, _pin);
+    GPIOPinWrite(_port, _pin, 0);
 
-    // IO will be updated by Timer ISR
+    // IO direction will be updated by Timer ISR
+}
+
+void SoftServo::disable()
+{
+    // Disable IO
+    GPIOPinTypeGPIOInput(_port, _pin);
 }
 
 
@@ -91,9 +87,9 @@ void initSoftServos()
 {
     unsigned int pwm_period;  
     
-    // Only use WTIMER5 for now
+    // Only use/init WTIMER5
 
-    //  Enable Peripherals
+    // Power Peripherals
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_WTIMER5);
@@ -109,37 +105,29 @@ void initSoftServos()
 
     IntEnable(INT_WTIMER5A);
     IntEnable(INT_WTIMER5B);
-
-    
-    // Finish servo initializations
-    servo6._pwm_period = pwm_period;
-    servo7._pwm_period = pwm_period;
-    servo8._pwm_period = pwm_period;
-    servo9._pwm_period = pwm_period;
-    servo10._pwm_period = pwm_period;
-    servo11._pwm_period = pwm_period;
-
-    servo6.set(0.5);
-    servo7.set(0.5);
-    servo8.set(0.5);
-    servo9.set(0.5);
-    servo10.set(0.5);
-    servo11.set(0.5);
 }
 
-
 volatile SoftServo* _softServo[8] = {
-    &servo6,
-    &servo7,
-    &servo8,
-    &servo9,
-    &servo10,
-    &servo11,
+    &dummySoftServo,
+    &dummySoftServo,
+    &dummySoftServo,
+    &dummySoftServo,
+    &dummySoftServo,
+    &dummySoftServo,
     &dummySoftServo,
     &dummySoftServo
 };
 
 volatile unsigned char _softServoNdx = 0;
+volatile unsigned char _softServoNum = 0;
+
+void attachSoftServo(SoftServo* servo)
+{
+    if (_softServoNum > 7)
+        return;
+
+    _softServo[_softServoNum++] = servo;
+}
 
 extern "C" void WTimer5AIntHandler(void)
 {
