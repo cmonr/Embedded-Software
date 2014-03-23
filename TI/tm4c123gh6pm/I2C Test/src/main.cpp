@@ -57,11 +57,11 @@ int main(void)
 
     while(1)
     {
-        delay(1);
+        delay(0.25);
         rLED.set(1.0);
         pca9557.write(2, pca9557.HIGH);
        
-        delay(1);
+        delay(0.25);
         rLED.set(0);
         pca9557.write(2, pca9557.LOW);
     }
