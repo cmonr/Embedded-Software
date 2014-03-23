@@ -10,7 +10,6 @@ void FaultISR(unsigned int * hardfault_args);
 void IntDefaultHandler(void);
 
 extern int main(void);
-extern void I2C0IntHandler(void);
 extern void WTimer5AIntHandler(void);
 extern void WTimer5BIntHandler(void);
 
@@ -51,7 +50,7 @@ __attribute__ ((section(".isr_vector")))void (* const g_pfnVectors[])(void) =
     IntDefaultHandler,                      // UART0 Rx and Tx
     IntDefaultHandler,                      // UART1 Rx and Tx
     IntDefaultHandler,                      // SSI0 Rx and Tx
-    I2C0IntHandler,                         // I2C0 Master and Slave
+    IntDefaultHandler,                       // I2C0 Master and Slave
     IntDefaultHandler,                      // PWM Fault
     IntDefaultHandler,                      // PWM Generator 0
     IntDefaultHandler,                      // PWM Generator 1
