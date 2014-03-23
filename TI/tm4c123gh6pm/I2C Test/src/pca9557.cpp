@@ -4,11 +4,6 @@ extern "C" {
 
 #include "pca9557.h"
 
-PCA9557::PCA9557()
-{
-    PCA9557(0);
-}
-
 PCA9557::PCA9557(unsigned char offset)
 {
     // Address
@@ -17,7 +12,7 @@ PCA9557::PCA9557(unsigned char offset)
     // Disable all polarity inversion
     data[0] = 2;
     data[1] = 0x00;
-    I2CWrite(0x18, data, 2);
+    I2CWrite(addr, data, 2);
 
     // Init all IO to Inputs
     setDir(IN, IN, IN, IN, IN, IN, IN, IN);
@@ -40,7 +35,7 @@ void PCA9557::setDir(IO_DIR p0, IO_DIR p1, IO_DIR p2, IO_DIR p3, IO_DIR p4, IO_D
     // Write changes to IC 
     data[0] = 3;
     data[1] = _dir;
-    I2CWrite(0x18, data, 2);
+    I2CWrite(addr, data, 2);
 }
 
 void PCA9557::setDir(unsigned char pin, IO_DIR dir)
@@ -52,7 +47,7 @@ void PCA9557::setDir(unsigned char pin, IO_DIR dir)
     // Write changes to IC 
     data[0] = 3;
     data[1] = _dir;
-    I2CWrite(0x18, data, 2);
+    I2CWrite(addr, data, 2);
 }
 
 void PCA9557::write(IO_LEVEL p0, IO_LEVEL p1, IO_LEVEL p2, IO_LEVEL p3, IO_LEVEL p4, IO_LEVEL p5, IO_LEVEL p6, IO_LEVEL p7)
@@ -81,7 +76,7 @@ void PCA9557::write(unsigned char pin, IO_LEVEL level)
     // Write changes to IC 
     data[0] = 1;
     data[1] = _out;
-    I2CWrite(0x18, data, 2);
+    I2CWrite(addr, data, 2);
 }
 
 unsigned char PCA9557::read(unsigned char pin)

@@ -13,8 +13,7 @@ class PCA9557
             IN = 1
         };
 
-        PCA9557();
-        PCA9557( unsigned char );
+        PCA9557( unsigned char = 0 );
 
         void setDir( IO_DIR, IO_DIR, IO_DIR, IO_DIR, IO_DIR, IO_DIR, IO_DIR, IO_DIR );
         void setDir( unsigned char, IO_DIR );
