@@ -1,0 +1,16 @@
+# Specify remote target
+target extended-remote :3333
+
+# Reset to known state
+monitor reset init
+load
+monitor reset init
+
+# Set a breakpoint at HardFault Handler
+break startup.c:FaultISR
+
+# Set a breakpoint at main().
+break main.cpp:main
+
+# Run to the breakpoint.
+continue
