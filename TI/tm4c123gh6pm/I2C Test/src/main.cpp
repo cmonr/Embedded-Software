@@ -19,6 +19,7 @@ extern "C" {
 
 #include "led.h"
 #include "pca9557.h"
+#include "ina220.h"
 
 #define delay(x)      SysCtlDelay(SysCtlClockGet() / 3 * x);
 
@@ -43,6 +44,13 @@ int main(void)
     PCA9557 pca9557 = PCA9557();
     pca9557.setDir(2, pca9557.OUT); // Servo Enable
 
+
+    // Initialize Power Monitor
+    INA220 ina220 = INA220(15, 0.0001);
+    ina220.setMaxVolage(15);
+    //ina220.setResolution(12);
+    ina220.setMode(V_CONT);     // Verify unctionality by only reading V
+
 /*
     // Initialize IMU (MPU6050)
     initMPU6050();
@@ -55,11 +63,16 @@ int main(void)
     // Enable Interrupts
     IntMasterEnable();
 
+    static float volts;
     while(1)
     {
+        volts = ina220.readVolts();
+
         delay(0.25);
         rLED.set(1.0);
         pca9557.write(2, pca9557.HIGH);
+        //amps = ina220.readAmps();
+
        
         delay(0.25);
         rLED.set(0);
