@@ -14,7 +14,8 @@
 #include <driverlib/sysctl.h>
 
 
-#include "roboticsBP.h"
+//#include "roboticsBP.h"
+#include "pin.h"
 
 #define delay(x)      SysCtlDelay(SysCtlClockGet() / 3 * x);
 
@@ -26,7 +27,16 @@ int main(void)
    
 
     // Initialize Robotics BoosterPack
-    RoboticsBP roboticsBP = RoboticsBP();
+    //RoboticsBP roboticsBP = RoboticsBP();
+
+    Pin led = Pin(PF1);
+    led.setDir(OUTPUT);
+
+    while(1){
+        led.toggle();
+        delay(1);
+    }
+
 
 /*
     // Initialize Peripherals
@@ -102,8 +112,8 @@ int main(void)
     */
 
     // Enable Interrupts
-    IntMasterEnable();
+    //IntMasterEnable();
 
 
-    while(1);
+    //while(1);
 }
