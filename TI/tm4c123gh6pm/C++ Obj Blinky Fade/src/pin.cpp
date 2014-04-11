@@ -31,7 +31,7 @@ Pin::Pin(tPin pin)
 
     // Default Pin Values
     _dir = IN;
-    _outState = HIGH;   // Double check this
+    _outState = LOW;
 
     // Enable Port
     SysCtlPeripheralEnable(port.periph);
