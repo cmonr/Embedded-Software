@@ -4,8 +4,12 @@
 #include <driverlib/sysctl.h>
 #include <driverlib/gpio.h>
 
+#ifndef _PIN_H_
+#define _PIN_H_
+
 #define PORT_WIDTH 8
 #define PORT_COUNT PIN_COUNT/PORT_WIDTH
+
 
 typedef enum {
     PA0, PA1, PA2, PA3, PA4, PA5, PA6, PA7,
@@ -21,19 +25,10 @@ typedef struct
 {
     unsigned int periph;
     unsigned int base;
-}tPort;
+} tPort;
 
 
-static tPort _ports[6] =
-{
-    {SYSCTL_PERIPH_GPIOA, GPIO_PORTA_BASE},
-    {SYSCTL_PERIPH_GPIOB, GPIO_PORTB_BASE},
-    {SYSCTL_PERIPH_GPIOC, GPIO_PORTC_BASE},
-    {SYSCTL_PERIPH_GPIOD, GPIO_PORTD_BASE},
-    {SYSCTL_PERIPH_GPIOE, GPIO_PORTE_BASE},
-    {SYSCTL_PERIPH_GPIOF, GPIO_PORTF_BASE}
-};
-
+extern tPort _ports[6];
 
 typedef enum { IN, OUT } PinDir;
 typedef enum { LOW, HIGH } PinOutState;
@@ -62,4 +57,6 @@ class Pin
         PinOutState _outState;
 };
 
-static Pin* _pins[PIN_COUNT];
+extern Pin* _pins[PIN_COUNT];
+
+#endif

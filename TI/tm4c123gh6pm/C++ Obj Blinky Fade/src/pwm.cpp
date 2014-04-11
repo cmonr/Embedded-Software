@@ -29,6 +29,8 @@ tPWM _pwm[2]=
     }
 };
 
+PWM* pwm[2];
+
 
 PWM::PWM(unsigned char ndx, unsigned long freq)
 {
@@ -102,7 +104,7 @@ void PWM::enable(unsigned char pin_ndx)
     Pin(pwm_pin.pin);
     
     // Set GPIO Pin Mux
-    GPIOPinTypePWM(_pins[pwm_pin.pin] -> port.base, _pins[pwm_pin.pin] -> offset);
+    GPIOPinTypePWM(pins[pwm_pin.pin] -> port.base, pins[pwm_pin.pin] -> offset);
     GPIOPinConfigure(pwm_pin.pin_mux);
     
     // Enable PWM Output

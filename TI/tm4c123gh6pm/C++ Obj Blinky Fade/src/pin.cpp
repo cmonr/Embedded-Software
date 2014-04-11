@@ -6,11 +6,24 @@
 
 #include "pin.h"
 
+tPort _ports[6] =
+{
+    {SYSCTL_PERIPH_GPIOA, GPIO_PORTA_BASE},
+    {SYSCTL_PERIPH_GPIOB, GPIO_PORTB_BASE},
+    {SYSCTL_PERIPH_GPIOC, GPIO_PORTC_BASE},
+    {SYSCTL_PERIPH_GPIOD, GPIO_PORTD_BASE},
+    {SYSCTL_PERIPH_GPIOE, GPIO_PORTE_BASE},
+    {SYSCTL_PERIPH_GPIOF, GPIO_PORTF_BASE}
+};
+
+Pin* pins[PIN_COUNT];
+
+
 Pin::Pin(tPin pin)
 {
     // TODO: Add check for previous allocation
     //   For now, assume user is competent
-    _pins[pin] = this;
+    pins[pin] = this;
 
     // Figure out internal variables
     offset = 1 << (pin & 0x07);
