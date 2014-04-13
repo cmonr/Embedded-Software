@@ -64,7 +64,6 @@ CFLAGS     += -Os
 CFLAGS     += -ffunction-sections
 CFLAGS     += -fdata-sections
 CFLAGS     += -MD
-#CFLAGS     += -std=c99
 CFLAGS     += -Wall
 CFLAGS     += -pedantic
 CFLAGS     += -g
@@ -87,11 +86,11 @@ LDFLAGS    += -g
 LDFLAGS    += -L ${TW_DIR}/driverlib/gcc
 
 ifeq (${FPU},hard)
-LDFLAGS    += -L /usr/lib/gcc/arm-none-eabi/$(GCC_VER)/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16
 LDFLAGS    += -L /usr/arm-none-eabi/lib/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16
+LDFLAGS    += -L /usr/lib/gcc/arm-none-eabi/$(GCC_VER)/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16
 else
-LDFLAGS    += -L /usr/lib/gcc/arm-none-eabi/$(GCC_VER)/thumb/cortex-m4
 LDFLAGS    += -L /usr/arm-none-eabi/lib/thumb/cortex-m4
+LDFLAGS    += -L /usr/lib/gcc/arm-none-eabi/$(GCC_VER)/thumb/cortex-m4
 endif
 
 

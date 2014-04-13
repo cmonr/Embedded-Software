@@ -1,3 +1,5 @@
+//#include <stdarg.h>
+//#include <string.h>
 #include "uart.h"
 
 #define delay(x)      SysCtlDelay(SysCtlClockGet() / 3 * x);
@@ -9,6 +11,8 @@ int main(void)
 
     // Init UART0
     UART(0, 115200);
+    uart[0] -> enable();
+
 
     //uart[0] -> 
     /*UART0.write();
@@ -29,5 +33,16 @@ int main(void)
         delay(1);
     }*/
     
-    while(1);
+    while(1){
+        //uart[0] -> write('H');
+        delay(1);
+
+        //uart[0] -> write('i');
+        delay(0.5);
+
+        //uart[0] -> write('\r');
+        //uart[0] -> write('\n');
+
+        delay(0.25);
+    }
 }
