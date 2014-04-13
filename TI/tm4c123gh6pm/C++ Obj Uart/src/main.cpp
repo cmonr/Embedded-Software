@@ -1,4 +1,4 @@
-#include "pwm.h"
+#include "uart.h"
 
 #define delay(x)      SysCtlDelay(SysCtlClockGet() / 3 * x);
 
@@ -11,15 +11,15 @@ int main(void)
     UART(0, 115200);
 
     //uart[0] -> 
-    UART0.write();
-    UART0.read();
+    /*UART0.write();
+    //UART0.read();
     UART0.config();
     UART0.enable();
-    UART0.disable();
+    UART0.disable();*/
 
 
     // Setup LED PWM Periph
-    pwm[1] -> enable(5);
+    /*pwm[1] -> enable(5);
 
     while(1){
         pwm[1] -> set(5, 0.2);
@@ -27,5 +27,7 @@ int main(void)
 
         pwm[1] -> set(5, 0.0);
         delay(1);
-    }
+    }*/
+    
+    while(1);
 }
