@@ -85,6 +85,7 @@ LDFLAGS    += -T $(LD_SCRIPT)
 LDFLAGS    += -g
 
 LDFLAGS    += -L ${TW_DIR}/driverlib/gcc
+LDFLAGS    += -L ../../CortexM4Libs
 
 ifeq (${FPU},hard)
 LDFLAGS    += -L /usr/lib/gcc/arm-none-eabi/$(GCC_VER)/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16
