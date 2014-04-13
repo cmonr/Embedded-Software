@@ -214,7 +214,6 @@ unsigned int UART::readStr(unsigned char* str, unsigned long len)
 }
 
 
-extern "C" {
 void UART0IntHandler(){ uart[0] -> IRQ(); }
 void UART1IntHandler(){ uart[1] -> IRQ(); }
 void UART2IntHandler(){ uart[2] -> IRQ(); }
@@ -223,4 +222,3 @@ void UART4IntHandler(){ uart[4] -> IRQ(); }
 void UART5IntHandler(){ uart[5] -> IRQ(); }
 void UART6IntHandler(){ uart[6] -> IRQ(); }
 void UART7IntHandler(){ uart[7] -> IRQ(); }
-}
