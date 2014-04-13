@@ -88,11 +88,12 @@ LDFLAGS    += -L ${TW_DIR}/driverlib/gcc
 
 ifeq (${FPU},hard)
 LDFLAGS    += -L /usr/lib/gcc/arm-none-eabi/$(GCC_VER)/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16
+LDFLAGS    += -L /usr/arm-none-eabi/lib/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16
 else
 LDFLAGS    += -L /usr/lib/gcc/arm-none-eabi/$(GCC_VER)/thumb/cortex-m4
+LDFLAGS    += -L /usr/arm-none-eabi/lib/thumb/cortex-m4
 endif
 
-LDFLAGS    += -L /usr/arm-none-eabi/lib
 
 LDFLAGS    += --entry ResetISR
 LDFLAGS    += --gc-sections
@@ -118,10 +119,12 @@ asm: $(ASMS)
 
 # Compiler Command (C++)
 bin/%.o: src/%.cpp
+	#$(CPP) -c $(CFLAGS) -fno-rtti -fno-exceptions -o -std=c++11 $@ $< -MT $@ -MT ${@:.o=.s}
 	$(CPP) -c $(CFLAGS) -fno-rtti -fno-exceptions -o $@ $< -MT $@ -MT ${@:.o=.s}
 
 # Create Assembly (C++)
 bin/%.s: src/%.cpp
+	#$(CPP) -S $(CFLAGS) -fno-rtti -fno-exceptions -std=c++11 -o $@ $< -MT ${@:.s=.o} -MT $@
 	$(CPP) -S $(CFLAGS) -fno-rtti -fno-exceptions -o $@ $< -MT ${@:.s=.o} -MT $@
 
 # Compiler Command (C)
