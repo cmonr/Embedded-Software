@@ -1,5 +1,3 @@
-#include <stdlib.h>
-
 #include "io.h"
 
 tPort _ports[6] =
