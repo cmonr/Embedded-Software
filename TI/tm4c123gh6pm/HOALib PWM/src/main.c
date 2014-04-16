@@ -1,4 +1,7 @@
+#define DEBUG
+
 #include "pwm.h"
+
 
 #define delay(x)      SysCtlDelay(SysCtlClockGet() / 3 * x);
 
