@@ -18,7 +18,7 @@ typedef enum {
     PD0, PD1, PD2, PD3, PD4, PD5, PD6, PD7,
     PE0, PE1, PE2, PE3, PE4, PE5, PE6, PE7,
     PF0, PF1, PF2, PF3, PF4, PF5, PF6, PF7,
-    PIN_COUNT, ERR
+    PIN_COUNT, ERR, NONE
 } tPin;
 
 typedef struct
