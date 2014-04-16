@@ -85,7 +85,7 @@ tPWM_ERR PWM_Init(unsigned char ndx, unsigned long freq)
     PWMOutputState(pwm[ndx].base, 0xFF, false);
 
     //   Set all generator periods
-    pwm[ndx].period = (reload >> div) - 1;
+    pwm[ndx].period = (reload >> div) - 1 - 2;
     PWMGenPeriodSet(pwm[ndx].base, PWM_GEN_0, pwm[ndx].period);
     PWMGenPeriodSet(pwm[ndx].base, PWM_GEN_1, pwm[ndx].period);
     PWMGenPeriodSet(pwm[ndx].base, PWM_GEN_2, pwm[ndx].period);
@@ -111,12 +111,7 @@ tPWM_ERR PWM_Init(unsigned char ndx, unsigned long freq)
 
 void PWM_Set(unsigned char ndx, unsigned char pin_ndx, float duty)
 {
-    if (duty > 0.99)
-        duty = 0.99;
-    else if (duty < 0.01)
-        duty = 0.01;
-
-    PWMPulseWidthSet(pwm[ndx].base, pwm[ndx].pins[pin_ndx].pwm_out, pwm[ndx].period * duty );
+    PWMPulseWidthSet(pwm[ndx].base, pwm[ndx].pins[pin_ndx].pwm_out, pwm[ndx].period * duty + 1);
 }
 
 void PWM_Invert(unsigned char ndx, unsigned char pin_ndx, bool inv)
