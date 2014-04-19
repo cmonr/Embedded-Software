@@ -5,7 +5,7 @@
 #define rLED PF1
 #define gLED PF3
 
-#define UART0 _uart[0]
+#define UART0 &_uart[0]
 
 
 void UART0_IRQ_TX()
@@ -48,7 +48,7 @@ int main(void)
     UART_Enable(UART0);
 
     // Enable NVIC
-    //IntMasterEnable();
+    IntMasterEnable();
        
     while(1)
     {

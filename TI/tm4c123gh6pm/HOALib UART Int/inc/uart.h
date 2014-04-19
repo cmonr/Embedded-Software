@@ -19,14 +19,11 @@
 typedef enum
 {
     UART_TX_IRQ = 0,
-    UART_RX_IRQ
+    UART_RX_IRQ = 1,
+    UART_IRQ_FLAGS = 2
 } tUART_IRQ_Flag;
 
-unsigned long _uart_int_flags[2] =
-{
-    UART_INT_TX,
-    UART_INT_RX
-};
+extern unsigned long uart_int_flags[UART_IRQ_FLAGS];
 
 
 typedef struct
@@ -50,25 +47,25 @@ extern tUART _uart[8];
 
 
 
-void UART_Init( tUART );
+void UART_Init( tUART* );
 
-void UART_WriteChar( tUART, unsigned char );
-void UART_WriteStr( tUART, unsigned char* );
-void UART_Write( tUART, unsigned char*, unsigned long );
+void UART_WriteChar( tUART*, unsigned char );
+void UART_WriteStr( tUART*, unsigned char* );
+void UART_Write( tUART*, unsigned char*, unsigned long );
 
-unsigned char UART_ReadChar( tUART );
-unsigned int UART_ReadStr( tUART, unsigned char* , unsigned long );
-void UART_Read( tUART, unsigned char*, unsigned long);
+unsigned char UART_ReadChar( tUART* );
+unsigned int UART_ReadStr( tUART*, unsigned char* , unsigned long );
+void UART_Read( tUART*, unsigned char*, unsigned long);
 
-void UART_SetIRQ( tUART, tUART_IRQ_Flag, void (*)() );
-void UART_IntEnable( tUART, tUART_IRQ_Flag );
-void UART_IntDisable( tUART, tUART_IRQ_Flag );
+void UART_SetIRQ( tUART*, tUART_IRQ_Flag, void (*)() );
+void UART_IntEnable( tUART*, tUART_IRQ_Flag );
+void UART_IntDisable( tUART*, tUART_IRQ_Flag );
 
-void UART_IRQ( tUART );
+void UART_IRQ( tUART* );
 
 
-void UART_Enable( tUART );
-void UART_Disable( tUART );
+void UART_Enable( tUART* );
+void UART_Disable( tUART* );
 
 
 
