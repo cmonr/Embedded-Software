@@ -13,7 +13,12 @@
 #ifndef _PWM_H_
 #define _PWM_H_
 
+// TODO: Unroll this in the future
+#define PWM0 &_pwm[0]
+#define PWM1 &_pwm[3]
+
 #define PWM_MIN_RESOLUTION 100
+
 
 typedef struct
 {

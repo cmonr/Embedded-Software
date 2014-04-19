@@ -12,6 +12,11 @@
 #ifndef _I2C_H_
 #define _I2C_H_
 
+#define I2C0 &_i2c[0]
+#define I2C1 &_i2c[1]
+#define I2C2 &_i2c[2]
+#define I2C3 &_i2c[3]
+
 /*typedef enum
 {
     I2C_IRQ_FLAGS

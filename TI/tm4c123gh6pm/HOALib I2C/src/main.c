@@ -1,27 +1,13 @@
+#include <stdio.h>
+
 #include "uart.h"
+#include "i2c.h"
 
 #define delay(x)      SysCtlDelay(SysCtlClockGet() * x);
 
 #define rLED PF1
-#define bLED PF2
 
-#define UART0 &_uart[0]
-
-
-void UART0_IRQ_TX()
-{
-    Pin_Toggle(rLED);
-}
-
-void UART0_IRQ_RX()
-{
-    // Disable this for now. Really bright...
-    //Pin_Toggle(bLED);
-
-    UART_WriteChar(UART0, '\r');
-    UART_WriteChar(UART0, UART_ReadChar(UART0));
-}
-
+int i;
 
 int main(void)
 {
@@ -30,26 +16,41 @@ int main(void)
 
     // Init LEDs
     Pin_Init(rLED);
-    Pin_Init(bLED);
-
     Pin_Set(rLED, LOW);
-    Pin_Set(bLED, LOW);
-
 
     // Init UART0
     UART_Init(UART0);
-
-    UART_SetIRQ(UART0, UART_TX_IRQ, &UART0_IRQ_TX);
-    UART_SetIRQ(UART0, UART_RX_IRQ, &UART0_IRQ_RX);
-    UART_IntEnable(UART0, UART_TX_IRQ);
-    UART_IntEnable(UART0, UART_RX_IRQ);
-
     UART_Enable(UART0);
+    setbuf(stdout, NULL);   // Disable printf internal buffer
 
-    // Enable NVIC
-    IntMasterEnable();
+    // Init I2C0
+    I2C_Init(I2C0);
+    I2C_Enable(I2C0);
+
+
+
+    // Wait until user presses enter
+    UART_ReadChar(UART0);
+
+    // Scan for I2C addresses
+    for(i=0; i < (1 << 7); i++)
+    {
+        printf("x%02x:", i);
+        if (I2C_Write(I2C0, i, 0) == true)
+            printf("* ");
+        else    
+            printf("  ");
+
+        Pin_Toggle(rLED);
+
+
+        if (i % 8 == 7)
+            printf("\r\n");
+    }
+
+    // Indicator LED off
+    Pin_Set(rLED, LOW);
        
-    // Busy waiting since everything is interrupt driven ^_^
-    while(1);
+    while(1);      
 }
 

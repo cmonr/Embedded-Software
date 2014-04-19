@@ -13,7 +13,16 @@
 #ifndef _UART_H_
 #define _UART_H_
 
-//#define UART_BUFF_SIZE 64
+// TODO: Unroll this in the future
+#define UART0 &_uart[0]
+#define UART1 &_uart[1]
+#define UART2 &_uart[2]
+#define UART3 &_uart[3]
+#define UART4 &_uart[4]
+#define UART5 &_uart[5]
+#define UART6 &_uart[6]
+#define UART7 &_uart[7]
+
 
 
 typedef enum
