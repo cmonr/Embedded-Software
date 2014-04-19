@@ -48,12 +48,12 @@ typedef enum
     PWM_INSUFFICIENT_RESOLUTION
 } tPWM_ERR;
 
-tPWM_ERR PWM_Init( tPWM, unsigned long );
+tPWM_ERR PWM_Init( tPWM*, unsigned long );
 
-void PWM_Set( tPWM, unsigned char, float );
-void PWM_Invert( tPWM, unsigned char, bool );
-void PWM_Enable( tPWM, unsigned char );
-void PWM_Disable( tPWM, unsigned char );
+void PWM_Set( tPWM*, unsigned char, float );
+void PWM_Invert( tPWM*, unsigned char, bool );
+void PWM_Enable( tPWM*, unsigned char );
+void PWM_Disable( tPWM*, unsigned char );
 
 extern tPWM _pwm[2];
 
