@@ -75,6 +75,8 @@ CFLAGS     += -DTARGET_IS_BLIZZARD_RA1
 CFLAGS     += -fsingle-precision-constant
 CFLAGS     += -I$(TW_DIR) -I$(INCLUDES)
 
+Library_searchpath := $(shell ${CC} ${CFLAGS} -print-search-dirs | grep libraries | sed -e 's/libraries:\ =//' -e 's/:/ /g')
+
 LIBS       += driver
 LIBS       += m
 LIBS       += c
@@ -86,17 +88,12 @@ LDFLAGS    += -g
 
 LDFLAGS    += -L ${TW_DIR}/driverlib/gcc
 
-ifeq (${FPU},hard)
-LDFLAGS    += -L /usr/lib/gcc/arm-none-eabi/$(GCC_VER)/thumb/cortex-m4/float-abi-hard/fpuv4-sp-d16
-else
-LDFLAGS    += -L /usr/lib/gcc/arm-none-eabi/$(GCC_VER)/thumb/cortex-m4
-endif
-
-LDFLAGS    += -L /usr/arm-none-eabi/lib
+LDFLAGS    += $(patsubst %, -L %, ${Library_searchpath})
 
 LDFLAGS    += --entry ResetISR
 LDFLAGS    += --gc-sections
 LDFLAGS    += -nostdlib
+$(info ${LDFLAGS})
 # Flag Definitions
 ###############################################################################
 
