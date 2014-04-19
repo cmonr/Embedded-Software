@@ -93,7 +93,6 @@ LDFLAGS    += $(patsubst %, -L %, ${Library_searchpath})
 LDFLAGS    += --entry ResetISR
 LDFLAGS    += --gc-sections
 LDFLAGS    += -nostdlib
-$(info ${LDFLAGS})
 # Flag Definitions
 ###############################################################################
 
