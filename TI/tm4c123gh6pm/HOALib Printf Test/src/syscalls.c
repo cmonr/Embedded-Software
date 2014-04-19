@@ -1,11 +1,15 @@
-#include <sys/types.h>        //Needed for caddr_t
 #include <stdint.h>
+#include <sys/types.h>        //Needed for caddr_t
 
-#include <inc/hw_memmap.h>    //Needed for GPIO Pins/UART base
-#include <inc/hw_types.h>     //Needed for SysTick Types
-#include <driverlib/rom.h>
-#include <driverlib/rom_map.h>
+//#include <inc/hw_memmap.h>    //Needed for GPIO Pins/UART base
+//#include <inc/hw_types.h>     //Needed for SysTick Types
+//#include <driverlib/rom.h>
+//#include <driverlib/rom_map.h>
 
+#include "uart.h"
+
+#define PRINTF_UART_TX UART0
+#define PRINTF_UART_RX UART0
 
 char *heap_end = 0;
 
@@ -60,7 +64,7 @@ int _read(int file, char *ptr, int len)
 {
     unsigned int i;
     for( i = 0; i < len; i++ ){
-        ptr[i] = (char)MAP_UARTCharGet(UART0_BASE);
+        ptr[i] = UART_ReadChar(PRINTF_UART_RX);
     }
     return len;
 }
@@ -69,7 +73,7 @@ int _write(int file, char *ptr, unsigned int len)
 {
     unsigned int i;
     for(i = 0; i < len; i++){
-        MAP_UARTCharPut(UART0_BASE, ptr[i]);
+        UART_WriteChar(PRINTF_UART_TX, ptr[i]);
     }
     return i;
 }
