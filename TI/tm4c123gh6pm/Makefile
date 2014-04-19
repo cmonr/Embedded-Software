@@ -18,7 +18,7 @@ TOOL        := $(shell dirname `which arm-none-eabi-gcc`)
 TW_DIR	:=  ../../TivaWare
 
 # Location of a linker script, doesnt matter which one, they're the same
-LD_SCRIPT   := tm4c.ld
+LD_SCRIPT   := ../tm4c.ld
 
 # FPU Type
 FPU          := hard
