@@ -1,6 +1,6 @@
 #include "pwm.h"
 
-tPWM pwm[2]=
+tPWM _pwm[2]=
 {
     {SYSCTL_PERIPH_PWM0, PWM0_BASE,
         {
@@ -42,14 +42,14 @@ unsigned long pwmClkDiv[7] =
 };
 
 
-tPWM_ERR PWM_Init(unsigned char ndx, unsigned long freq)
+tPWM_ERR PWM_Init(tPWM* pwm, unsigned long freq)
 {
-    unsigned char div;
+    unsigned char div = 0;
+    unsigned char i;
     unsigned long reload;
-
     
     // Check if object already exists
-    if (pwm[ndx].isInit == true)
+    if (pwm -> isInit == true)
         return PWM_IS_INITIALIZED;
 	
     // Find best clk div for PWM periphs
@@ -59,91 +59,91 @@ tPWM_ERR PWM_Init(unsigned char ndx, unsigned long freq)
         if (div == 6)
             return PWM_FREQ_TOO_LOW;
 
-    pwm[ndx].clkDiv = div;
+    pwm -> clkDiv = div;
 
     //   Check other PWM freq
-    //     Only worry about this if the other PWM periph is initialized
-    if (pwm[1-ndx].isInit == true)
+    for(i=0; i<2; i++)
     {
-        // Check for larger divider
-        if (pwm[1-ndx].clkDiv > pwm[ndx].clkDiv)
-            // Make sure larger divider would result in sufficient PWM resolution
-            if ((reload >> (pwm[1-ndx].clkDiv)) < PWM_MIN_RESOLUTION)
-                return PWM_INSUFFICIENT_RESOLUTION; 
+        if ((reload >> (_pwm[i].clkDiv)) < PWM_MIN_RESOLUTION)
+            return PWM_INSUFFICIENT_RESOLUTION; 
+        
+        // Check for highest divider
+        if (_pwm[i].clkDiv > div)
+            div = _pwm[i].clkDiv;
     }
-
+    
     // Local Variables
-    pwm[ndx].freq = freq;
+    pwm -> freq = freq;
 
     // Power PWM Peripheral
-    SysCtlPeripheralEnable(pwm[ndx].periph);
+    SysCtlPeripheralEnable(pwm -> periph);
 
     // Configure PWM
     SysCtlPWMClockSet(pwmClkDiv[div]);
     
     //   Disable All Outputs
-    PWMOutputState(pwm[ndx].base, 0xFF, false);
+    PWMOutputState(pwm -> base, 0xFF, false);
 
     //   Set all generator periods
-    pwm[ndx].period = (reload >> div) - 1 - 2;
-    PWMGenPeriodSet(pwm[ndx].base, PWM_GEN_0, pwm[ndx].period);
-    PWMGenPeriodSet(pwm[ndx].base, PWM_GEN_1, pwm[ndx].period);
-    PWMGenPeriodSet(pwm[ndx].base, PWM_GEN_2, pwm[ndx].period);
-    PWMGenPeriodSet(pwm[ndx].base, PWM_GEN_3, pwm[ndx].period);
+    pwm -> period = (reload >> div) - 1 - 2;
+    PWMGenPeriodSet(pwm -> base, PWM_GEN_0, pwm -> period);
+    PWMGenPeriodSet(pwm -> base, PWM_GEN_1, pwm -> period);
+    PWMGenPeriodSet(pwm -> base, PWM_GEN_2, pwm -> period);
+    PWMGenPeriodSet(pwm -> base, PWM_GEN_3, pwm -> period);
 
     //   Set all generator modes
-    PWMGenConfigure(pwm[ndx].base, PWM_GEN_0, PWM_GEN_MODE_DOWN);
-    PWMGenConfigure(pwm[ndx].base, PWM_GEN_1, PWM_GEN_MODE_DOWN);
-    PWMGenConfigure(pwm[ndx].base, PWM_GEN_2, PWM_GEN_MODE_DOWN);
-    PWMGenConfigure(pwm[ndx].base, PWM_GEN_3, PWM_GEN_MODE_DOWN);
+    PWMGenConfigure(pwm -> base, PWM_GEN_0, PWM_GEN_MODE_DOWN);
+    PWMGenConfigure(pwm -> base, PWM_GEN_1, PWM_GEN_MODE_DOWN);
+    PWMGenConfigure(pwm -> base, PWM_GEN_2, PWM_GEN_MODE_DOWN);
+    PWMGenConfigure(pwm -> base, PWM_GEN_3, PWM_GEN_MODE_DOWN);
     
     //   Enable all generators
-    PWMGenEnable(pwm[ndx].base, PWM_GEN_0);
-    PWMGenEnable(pwm[ndx].base, PWM_GEN_1);
-    PWMGenEnable(pwm[ndx].base, PWM_GEN_2);
-    PWMGenEnable(pwm[ndx].base, PWM_GEN_3);
+    PWMGenEnable(pwm -> base, PWM_GEN_0);
+    PWMGenEnable(pwm -> base, PWM_GEN_1);
+    PWMGenEnable(pwm -> base, PWM_GEN_2);
+    PWMGenEnable(pwm -> base, PWM_GEN_3);
 
     // Initialization completed
-    pwm[ndx].isInit = true;
+    pwm -> isInit = true;
 
 	return PWM_NO_ERR;
 }
 
-void PWM_Set(unsigned char ndx, unsigned char pin_ndx, float duty)
+void PWM_Set(tPWM* pwm, unsigned char pin_ndx, float duty)
 {
-    PWMPulseWidthSet(pwm[ndx].base, pwm[ndx].pins[pin_ndx].pwm_out, pwm[ndx].period * duty + 1);
+    PWMPulseWidthSet(pwm -> base, pwm -> pins[pin_ndx].pwm_out, pwm -> period * duty + 1);
 }
 
-void PWM_Invert(unsigned char ndx, unsigned char pin_ndx, bool inv)
+void PWM_Invert(tPWM* pwm, unsigned char pin_ndx, bool inv)
 {
-   PWMOutputInvert(pwm[ndx].base, pwm[ndx].pins[pin_ndx].out_bit, inv); 
+   PWMOutputInvert(pwm -> base, pwm -> pins[pin_ndx].out_bit, inv); 
 }
 
 
-void PWM_Enable(unsigned char ndx, unsigned char pin_ndx)
+void PWM_Enable(tPWM* pwm, unsigned char pin_ndx)
 {
     // Too much dereferencing. Let's minimize that a bit
-    tPWM_Pin pwm_pin = pwm[ndx].pins[pin_ndx];
+    tPWM_Pin pwm_pin = pwm -> pins[pin_ndx];
 
     // Enable Pin Port
     // TODO: Initialize this better?
-    IO_Init(pwm_pin.pin);
+    Pin_Init(pwm_pin.pin);
     
     // Set GPIO Pin Mux
     GPIOPinTypePWM(pins[pwm_pin.pin].port.base, pins[pwm_pin.pin].offset);
     GPIOPinConfigure(pwm_pin.pin_mux);
     
     // Enable PWM Output
-    PWMOutputState(pwm[ndx].base, pwm_pin.out_bit, true);
+    PWMOutputState(pwm -> base, pwm_pin.out_bit, true);
 }
 
-void PWM_Disable(unsigned char ndx, unsigned char pin_ndx)
+void PWM_Disable(tPWM* pwm, unsigned char pin_ndx)
 {
     // Too much dereferencing. Let's minimize that a bit
-    tPWM_Pin pwm_pin = pwm[ndx].pins[pin_ndx];
+    tPWM_Pin pwm_pin = pwm -> pins[pin_ndx];
 
     // Disable PWM Output
-    PWMOutputState(pwm[ndx].base, pwm_pin.out_bit, false);
+    PWMOutputState(pwm -> base, pwm_pin.out_bit, false);
 
     // Set GPIO Pin Mux
     GPIOPinTypeGPIOInput(pins[pwm_pin.pin].port.base, pins[pwm_pin.pin].offset);
