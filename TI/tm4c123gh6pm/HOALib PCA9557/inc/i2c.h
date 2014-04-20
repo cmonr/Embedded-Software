@@ -1,3 +1,10 @@
+#ifndef _I2C_H_
+#define _I2C_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <inc/hw_memmap.h>
@@ -9,8 +16,6 @@
 
 #include "pin.h"
 
-#ifndef _I2C_H_
-#define _I2C_H_
 
 #define I2C0 &_i2c[0]
 #define I2C1 &_i2c[1]
@@ -75,5 +80,10 @@ bool I2C_ReadBuff( tI2C*, unsigned char, unsigned char*, unsigned int );
 
 void I2C_Enable( tI2C* );
 void I2C_Disable( tI2C* );
+
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

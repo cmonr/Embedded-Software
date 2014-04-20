@@ -19,21 +19,24 @@ int main(void)
     Pin_Init(PF1);
     Pin_Set(PF1, LOW);
 
-
+    // I2C0
+    I2C_Init(I2C0);
+    I2C_Enable(I2C0);
+    
 
     // Init Objects
     PCA9557 pca9557 = PCA9557(I2C0);
-    pca9557.set(P0, OUT);
-    pca9557.read(P0);
-_
+    pca9557.set(P2, LOW);
+    pca9557.set(P3, LOW);
+
 
     while(1)
     {
         Pin_Toggle(PF1);
 
-        pca9557.toggle(P0);
+        pca9557.toggle(P2);
 
-        delay(0.1);
+        delay(0.2);
     }
 }
 

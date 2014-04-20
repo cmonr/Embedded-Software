@@ -30,7 +30,7 @@ typedef enum {
     PIN_COUNT, ERR, NONE
 } tPinName;
 
-typedef enum { HiZ, LOW, HIGH } tPin_State;
+typedef enum { LOW=0, HIGH=1, HiZ=2, IN = HiZ } tPin_State;
 
 typedef struct{
     bool isInit;
