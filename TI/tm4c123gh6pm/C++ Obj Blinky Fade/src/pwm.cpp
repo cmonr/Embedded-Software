@@ -29,6 +29,8 @@ tPWM _pwm[2]=
     }
 };
 
+PWM* pwm[2];
+
 
 PWM::PWM(unsigned char ndx, unsigned long freq)
 {
@@ -49,14 +51,29 @@ PWM::PWM(unsigned char ndx, unsigned long freq)
 
 
     // Configure PWM
-    //   Set clock divider
-    SysCtlPWMClockSet(SYSCTL_PWMDIV_64);
+    //   Set clock divider for highest resolution
+    //   If this fails, god speed.
+    int div = ((unsigned long) SysCtlClockGet()/freq) >> 16;
+    if (div < 1)
+        SysCtlPWMClockSet(SYSCTL_PWMDIV_1);
+    else if (div < 2)
+        SysCtlPWMClockSet(SYSCTL_PWMDIV_2);
+    else if (div < 4)
+        SysCtlPWMClockSet(SYSCTL_PWMDIV_4);
+    else if (div < 8)
+        SysCtlPWMClockSet(SYSCTL_PWMDIV_8);
+    else if (div < 16)
+        SysCtlPWMClockSet(SYSCTL_PWMDIV_16);
+    else if (div < 32)
+        SysCtlPWMClockSet(SYSCTL_PWMDIV_32);
+    else if (div < 64)
+        SysCtlPWMClockSet(SYSCTL_PWMDIV_64);
 
     //   Disable All Outputs
     PWMOutputState(_pwm[ndx].base, 0xFF, false);
 
     //   Set all generator periods
-    _pwm_period = SysCtlClockGet() / 64 / freq - 1;
+    _pwm_period = SysCtlClockGet() / freq - 1;
     PWMGenPeriodSet(_pwm[ndx].base, PWM_GEN_0, _pwm_period);
     PWMGenPeriodSet(_pwm[ndx].base, PWM_GEN_1, _pwm_period);
     PWMGenPeriodSet(_pwm[ndx].base, PWM_GEN_2, _pwm_period);
@@ -78,12 +95,12 @@ PWM::PWM(unsigned char ndx, unsigned long freq)
 
 void PWM::set(unsigned char pin_ndx, float duty)
 {
-    if (duty > 1.0)
-        duty = 1.0;
-    else if (duty < 0.0)
-        duty = 0.0;
+    if (duty > 0.99)
+        duty = 0.99;
+    else if (duty < 0.01)
+        duty = 0.01;
 
-    PWMPulseWidthSet(_pwm[_ndx].base, _pwm[_ndx].pins[pin_ndx].pwm_out, _pwm_period * duty);
+    PWMPulseWidthSet(_pwm[_ndx].base, _pwm[_ndx].pins[pin_ndx].pwm_out, _pwm_period * duty );
 }
 
 void PWM::invert(unsigned char pin_ndx, bool inv)
@@ -102,7 +119,7 @@ void PWM::enable(unsigned char pin_ndx)
     Pin(pwm_pin.pin);
     
     // Set GPIO Pin Mux
-    GPIOPinTypePWM(_pins[pwm_pin.pin] -> port.base, _pins[pwm_pin.pin] -> offset);
+    GPIOPinTypePWM(pins[pwm_pin.pin] -> port.base, pins[pwm_pin.pin] -> offset);
     GPIOPinConfigure(pwm_pin.pin_mux);
     
     // Enable PWM Output

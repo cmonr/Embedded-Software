@@ -9,14 +9,18 @@
 
 #include "pin.h"
 
-typedef struct{
-        tPin pin;
-        unsigned int pin_mux;
 
-        unsigned int generator;
-        unsigned int pwm_out;
-        unsigned int out_bit;
-    } tPWM_Pin;
+#ifndef _PWM_H_
+#define _PWM_H_
+
+typedef struct{
+    tPin pin;
+    unsigned int pin_mux;
+
+    unsigned int generator;
+    unsigned int pwm_out;
+    unsigned int out_bit;
+} tPWM_Pin;
 
 typedef struct
 {
@@ -26,6 +30,8 @@ typedef struct
 
     tPWM_Pin pins[8];
 } tPWM;
+
+extern tPWM _pwm[2];
 
 
 class PWM
@@ -44,4 +50,8 @@ class PWM
         unsigned char _pwm_period;
 };
 
-static PWM* pwm[2];
+extern PWM* pwm[2];
+
+extern Pin* pins[PIN_COUNT];
+
+#endif

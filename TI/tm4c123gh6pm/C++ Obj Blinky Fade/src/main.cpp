@@ -14,13 +14,17 @@ int main(void)
     pwm[1] -> enable(5);
 
     while(1){
-        pwm[1] -> set(5, 0.25);
-        delay(1);
+        float i=0;
+        for(; i<0.2; i+=0.001)
+        {
+            pwm[1] -> set(5, i);
+            delay(0.001);
+        }
 
-        pwm[1] -> set(5, 0.5);
-        delay(1);
-
-        pwm[1] -> set(5, 0.75);
-        delay(1);
+        for(; i>=0.0; i-=0.001)
+        {
+            pwm[1] -> set(5, i);
+            delay(0.001);
+        }
     }
 }
