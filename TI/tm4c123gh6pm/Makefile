@@ -15,10 +15,10 @@ INCLUDES    := inc
 TOOL        := $(shell dirname `which arm-none-eabi-gcc`)
 
 # Path to the root of your StellarisWare folder
-TW_DIR	:=  ../../TivaWare
+TW_DIR	:=  ${HOME}/src/TivaWare
 
 # Location of a linker script, doesnt matter which one, they're the same
-LD_SCRIPT   := tm4c.ld
+LD_SCRIPT   := ../tm4c.ld
 
 # FPU Type
 FPU          := hard
@@ -73,6 +73,7 @@ CFLAGS     += -Dgcc
 CFLAGS     += -unresolved-symbols=ignore-all
 CFLAGS     += -DTARGET_IS_BLIZZARD_RA1
 CFLAGS     += -fsingle-precision-constant
+CFLAGS     += -fno-unwind-tables
 CFLAGS     += -I$(TW_DIR) -I$(INCLUDES)
 
 Library_searchpath := $(shell ${CC} ${CFLAGS} -print-search-dirs | grep libraries | sed -e 's/libraries:\ =//' -e 's/:/ /g')

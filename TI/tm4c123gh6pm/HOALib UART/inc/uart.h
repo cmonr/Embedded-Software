@@ -1,3 +1,6 @@
+#ifndef _UART_H_
+#define _UART_H_
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <inc/hw_memmap.h>
@@ -9,9 +12,7 @@
 #include <driverlib/interrupt.h>
 
 #include "pin.h"
-
-#ifndef _UART_H_
-#define _UART_H_
+#include "io-classes.h"
 
 //#define UART_BUFF_SIZE 64
 
@@ -32,22 +33,21 @@ typedef struct
     bool isInit;
 } tUART;
 
-extern tUART uart[8];
-
-/*
+class UART : public CharDevice {
+public:
         typedef enum
         {
             FIVE  = UART_CONFIG_WLEN_5,
             SIX   = UART_CONFIG_WLEN_6,
             SEVEN = UART_CONFIG_WLEN_7,
             EIGHT = UART_CONFIG_WLEN_8
-        } tUART_DATA_LEN;
+        } tDATA_LEN;
 
         typedef enum
         {
             ONE = UART_CONFIG_STOP_ONE,
             TWO = UART_CONFIG_STOP_TWO
-        } tUART_STOP_BITS;
+        } tSTOP_BITS;
 
         typedef enum
         {
@@ -56,12 +56,6 @@ extern tUART uart[8];
             ODD  = UART_CONFIG_PAR_ODD
         } tPARITY_BIT;
 
-        typedef struct
-        {
-            tDATA_LEN length;
-            tSTOP_BITS stop;
-            tPARITY_BIT parity;
-        } tFORMAT;
 
         typedef enum
         {
@@ -72,32 +66,35 @@ extern tUART uart[8];
         UART( unsigned char );
         UART( unsigned char, unsigned long );
         UART( unsigned char, unsigned long, tDATA_LEN, tSTOP_BITS, tPARITY_BIT );
-*/
+  virtual int putc ( int );
+  virtual int getc ();
+  virtual int open ();
+  virtual int close ();
+  virtual int seek ( long int offset, int origin );
 
-void UART_Init( tUART );
+        void setIRQHandler( tIRQ, void (*)(void) );
+	void enableIRQ( void );
+	void disableIRQ( void );
 
-void UART_WriteChar( tUART, unsigned char );
-void UART_WriteStr( tUART, unsigned char* );
-void UART_Write( tUART, unsigned char*, unsigned long );
+	void IRQ( void );
 
-unsigned char UART_ReadChar( tUART );
-unsigned int UART_ReadStr( tUART, unsigned char* , unsigned long );
-void UART_Read( tUART, unsigned char*, unsigned long);
+    private:
+        typedef struct
+        {
+unsigned long baud;
+            tDATA_LEN length;
+            tSTOP_BITS stop;
+            tPARITY_BIT parity;
+        } tFORMAT;
 
+        int _ndx;
+        tFORMAT _format;
 
+        unsigned long _irq_mask;
+        void (*_tx_irq)(void);
+        void (*_rx_irq)(void);
+};
 
-void UART_Enable( tUART );
-void UART_Disable( tUART );
-
-//void setIRQHandler( tIRQ, void (*)(void) );
-//void enableIRQ( void );
-//void disableIRQ( void );
-
-//void IRQ( void );
-
-
-
-extern tIOPin pins[PIN_COUNT];
 
 void UART0IntHandler( void );
 void UART1IntHandler( void );
