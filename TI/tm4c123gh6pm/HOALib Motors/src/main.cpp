@@ -51,7 +51,7 @@ int main(void)
         float i;
         for(i=0.0; i<1.0; i+=0.01)
         {
-            delay(0.05);
+            delay(0.01);
             PWM_Set(rLED, i * 0.2);
             m0.set(i);
             m1.set(i);
@@ -63,9 +63,9 @@ int main(void)
 
         printf("\r\n");
         
-        for(i=1.0; i>-1.0; i-=0.1)
+        for(i=1.0; i>-1.0; i-=0.01)
         {
-            delay(0.05);
+            delay(0.01);
             PWM_Set(rLED, i * 0.2);
             m0.set(i);
             m1.set(i);
@@ -75,9 +75,9 @@ int main(void)
             printf("\r %0.2f ", i);
         }
         
-        for(i=-1.0; i<0.0; i+=0.1)
+        for(i=-1.0; i<0.0; i+=0.01)
         {
-            delay(0.05);
+            delay(0.01);
             PWM_Set(rLED, i * 0.2);
             m0.set(i);
             m1.set(i);

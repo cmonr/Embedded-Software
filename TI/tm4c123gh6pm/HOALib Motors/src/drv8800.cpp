@@ -6,15 +6,16 @@ DRV8800::DRV8800(tPWM *pwm, unsigned char pwm_pin, tPinName dir)
 {
     _pwm = pwm;
     _pwm_pin = pwm_pin;
-    _dir = dir;
     _nsleep = NONE;
 
     
     // Enable pins here to prevent an undefined output state 
 
     // Enable Dir Pin
+    // BUG! Need bot LOW and HIGH to make motors work...
     Pin_Init(dir);
     Pin_Set(dir, LOW);
+    Pin_Set(dir, HIGH);
     
     // Enable PWM Output to Pin
     PWM_Invert(_pwm, _pwm_pin, true);
@@ -31,19 +32,9 @@ void DRV8800::set(float duty)
     
     // Throttle duty cycle
     duty = fabs(duty / 2.0 + 0.5);
-    //debug = duty * 1000;
     
     // Set PWM signal
     PWM_Set(_pwm, _pwm_pin, duty);
-
-
-    if (_invert)
-        duty = duty * -1;
-
-    if (duty < 0)
-        Pin_Set(_dir, LOW);
-    else    
-        Pin_Set(_dir, HIGH);
 }
 
 void DRV8800::throttle(float max)

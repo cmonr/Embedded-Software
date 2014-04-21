@@ -61,7 +61,7 @@ void Pin_Set(tPinName pin, tPin_State state)
         if (state == LOW)
             GPIOPinWrite(pins[pin].port.base, pins[pin].offset, 0);
         else
-            GPIOPinWrite(pins[pin].port.base, pins[pin].offset, pins[pin].offset);
+            GPIOPinWrite(pins[pin].port.base, pins[pin].offset, 0xFF);
     }
     
     // Update internal variable
