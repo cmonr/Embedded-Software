@@ -1,3 +1,6 @@
+#include <inc/hw_types.h>
+#include <inc/hw_gpio.h>
+
 #include "pin.h"
 
 tPort ports[6] =
@@ -28,6 +31,14 @@ tPinName Pin_Init(tPinName pin)
     // Enable Port
     SysCtlPeripheralEnable(pins[pin].port.periph);
 
+    // Unlock NMI pins
+    if (pin == PF0 || pin == PD7)
+    {
+        HWREG(pins[pin].port.base + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+        HWREG(pins[pin].port.base + GPIO_O_CR) |= pins[pin].offset;
+        HWREG(pins[pin].port.base + GPIO_O_LOCK) = 0;
+    }
+
     // Pin initialized
     pins[pin].isInit = true;
 
@@ -36,6 +47,10 @@ tPinName Pin_Init(tPinName pin)
 
 void Pin_Set(tPinName pin, tPin_State state)
 {
+    // Check for valid pin name
+    if (pin == NONE || pin == ERR)  
+        return;
+
     // Set Pin
     if (pins[pin].state == HiZ)
         GPIOPinTypeGPIOInput(pins[pin].port.base, pins[pin].offset);
@@ -55,6 +70,10 @@ void Pin_Set(tPinName pin, tPin_State state)
 
 void Pin_Toggle(tPinName pin)
 {
+    // Check for valid pin name
+    if (pin == NONE || pin == ERR)  
+        return;
+
     // Pin is an input
     if (pins[pin].state == HiZ)
         return;
@@ -68,6 +87,10 @@ void Pin_Toggle(tPinName pin)
 
 unsigned char Pin_Read(tPinName pin)
 {
+    // Check for valid pin name
+    if (pin == NONE || pin == ERR)  
+        return -1;
+
     // Return 1 or 0
     return GPIOPinRead(pins[pin].port.base, pins[pin].offset) == 0 ? 0 : 1;
 }

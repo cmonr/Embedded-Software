@@ -19,7 +19,26 @@ extern "C" {
 
 // TODO: Unroll this in the future
 #define PWM0 &_pwm[0]
-#define PWM1 &_pwm[3]
+#define PWM1 &_pwm[1]
+
+#define PWM0_0 PWM0,0
+#define PWM0_1 PWM0,1
+#define PWM0_2 PWM0,2
+#define PWM0_3 PWM0,3
+#define PWM0_4 PWM0,4
+#define PWM0_5 PWM0,5
+#define PWM0_6 PWM0,6
+#define PWM0_7 PWM0,7
+
+#define PWM1_0 PWM1,0
+#define PWM1_1 PWM1,1
+#define PWM1_2 PWM1,2
+#define PWM1_3 PWM1,3
+#define PWM1_4 PWM1,4
+#define PWM1_5 PWM1,5
+#define PWM1_6 PWM1,6
+#define PWM1_7 PWM1,7
+
 
 #define PWM_MIN_RESOLUTION 100
 

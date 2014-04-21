@@ -3,7 +3,7 @@
 class DRV8800
 {
     public:
-        DRB8800( tPWM*, unsigned char, tPin );
+        DRV8800( tPWM*, unsigned char, tPinName );
 
         void set( float );
         void throttle( float );
@@ -16,7 +16,10 @@ class DRV8800
         tPWM* _pwm;
         unsigned char _pwm_pin;
 
-        tPin _pin;
+        tPinName _dir;
+        tPinName _nsleep;
         bool _invert;
         float _max;
-}
+
+        long debug;
+};
