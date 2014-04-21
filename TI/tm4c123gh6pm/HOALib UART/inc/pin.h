@@ -18,7 +18,7 @@ typedef enum {
     PD0, PD1, PD2, PD3, PD4, PD5, PD6, PD7,
     PE0, PE1, PE2, PE3, PE4, PE5, PE6, PE7,
     PF0, PF1, PF2, PF3, PF4, PF5, PF6, PF7,
-    PIN_COUNT, ERR, NONE
+    PIN_COUNT
 } tPin;
 
 typedef struct
@@ -27,29 +27,36 @@ typedef struct
     unsigned int base;
 } tPort;
 
+
 extern tPort _ports[6];
 
+typedef enum { IN, OUT } PinDir;
+typedef enum { LOW, HIGH } PinOutState;
 
-typedef enum { HiZ, LOW, HIGH } tIOPin_State;
+class Pin
+{
+    public:
+        /*typedef enum { OpenCollector, PushPull } PinMode;*/
 
-tPin IO_Init( tPin );
-void IO_Set( tPin, tIOPin_State );
-void IO_Toggle( tPin );
-unsigned char IO_Read( tPin );
+        Pin( tPin );
 
-void IO_Enable( tPin );
-void IO_Disable( tPin );
+        void setDir( PinDir );
+        void set( PinOutState );
+        void toggle( void );
+        unsigned char read( void );
 
+        void enable( void );
+        void disable( void );
 
-typedef struct{
-    bool isInit;
+        // TODO: Make these readonly
+        tPort port;
+        unsigned char offset;
 
-    tPort port;
-    unsigned char offset;
+    private:
+        PinDir _dir;
+        PinOutState _outState;
+};
 
-    tIOPin_State state;
-} tIOPin;
-
-extern tIOPin pins[PIN_COUNT];
+extern Pin* _pins[PIN_COUNT];
 
 #endif

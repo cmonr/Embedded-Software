@@ -6,6 +6,7 @@
 #include <driverlib/rom.h>
 #include <driverlib/rom_map.h>
 
+#include "io-classes.h"
 
 char *heap_end = 0;
 
@@ -30,27 +31,37 @@ caddr_t _sbrk(unsigned int incr)
     return (caddr_t) prev_heap_end;
 }
 
-int _close(int file)
+int _close(CharDevice * file)
 {
     return -1;
 }
 
-int _fstat(int file)
+int _fstat(CharDevice * file)
 {
     return -1;
 }
 
-int _isatty(int file)
+int _isatty(CharDevice * file)
 {
     return -1;
 }
 
-int _lseek(int file, int ptr, int dir)
+int _lseek(CharDevice * file, int ptr, int dir)
 {
     return -1;
 }
 
 int _open(const char *name, int flags, int mode)
+{
+    return -1;
+}
+
+int putc(CharDevice * file, int ptr, int dir)
+{
+    return -1;
+}
+
+int getc(CharDevice * file, int ptr, int dir)
 {
     return -1;
 }
