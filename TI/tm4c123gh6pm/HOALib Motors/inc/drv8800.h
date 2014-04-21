@@ -1,13 +1,14 @@
 #include "pwm.h"
 
-class Servo
+class DRV8800
 {
     public:
-        Servo ( tPWM*, unsigned char );
+        DRB8800( tPWM*, unsigned char, tPin );
 
         void set( float );
-        void setLimits( float, float );
+        void throttle( float );
         void invert( void );
+
         void enable( void );
         void disable( void );
 
@@ -15,7 +16,7 @@ class Servo
         tPWM* _pwm;
         unsigned char _pwm_pin;
 
+        tPin _pin;
         bool _invert;
-        float _offset;
-        float _range;
-};
+        float _max;
+}
