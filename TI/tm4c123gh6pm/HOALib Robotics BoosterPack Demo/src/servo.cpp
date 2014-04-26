@@ -9,7 +9,7 @@ Servo::Servo(tPWM* pwm, unsigned char pwm_pin)
     _pwm = pwm;
     _pwm_pin = pwm_pin;
 
-    setLimits(0, 1);
+    limit(0, 1);
 }
 
 void Servo::set(float duty)
@@ -32,7 +32,7 @@ void Servo::set(float duty)
 
 }
 
-void Servo::setLimits(float min, float max)
+void Servo::limit(float min, float max)
 {
     // Disable servo while configuring
     //disable();

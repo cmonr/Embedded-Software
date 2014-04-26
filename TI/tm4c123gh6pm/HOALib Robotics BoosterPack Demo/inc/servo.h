@@ -10,7 +10,7 @@ class Servo
         Servo ( tPWM*, unsigned char );
 
         void set( float );
-        void setLimits( float, float );
+        void limit( float, float );
         void invert( void );
         void enable( void );
         void disable( void );
