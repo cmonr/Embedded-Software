@@ -14,17 +14,17 @@
 #define bLED  PWM1_6
 
 
-#define CMD_DELIM '\n'
+#define CMD_DELIM ';'
 
 DRV8800* motors[4] = {&m0, &m1, &m2, &m3};
 Servo* servos[6] = {&s0, &s1, &s2, &s3, &s4, &s5};
 
 
-unsigned char* buff;
+unsigned char buff[32] = {0};
 unsigned char buffptr = 0;
 
 
-unsigned char cmdBuff[32];
+unsigned char cmdBuff[32] = {0};
 
 
 void parseCmd()
@@ -598,14 +598,15 @@ void UART0_RX_IRQ()
     // Read cahracter
     unsigned char data = UART_ReadChar(UART0);
 
-    buff[buffptr++] = data;
+    buff[buffptr] = data;
+    buffptr++;
 
     // TODO: Add check for max buffer size
 
     if (data == CMD_DELIM)
     {
        // Copy string into seperate buffer
-       memcpy(cmdBuff, buff, 32);
+       memcpy(&cmdBuff, &buff, 32 * sizeof(char));
 
        // Zero off buffer
        memset(buff, 0, 32);
@@ -641,15 +642,21 @@ int main(void)
     PWM_Enable(rLED);
     PWM_Enable(gLED);
     PWM_Enable(bLED);
+    PWM_Set(rLED, 0);
+    PWM_Set(gLED, 0);
+    PWM_Set(bLED, 0);
     
-    // NVIC
-    IntMasterEnable();
-
 
     // Init Robotics BoosterPack
     RoboticsBP_Init();
 
-    
+
+    // NVIC
+    IntMasterEnable();
+
+
+
+    /*
     // Power On Self Test
     printf("POST Started");
 
@@ -675,7 +682,7 @@ int main(void)
     servoTest(&s4);
     servoTest(&s5);
 
-    printf("\rPOST Completed\r\n\n");
+    printf("\rPOST Completed\r\n\n");*/
 
     while(1);
 }

@@ -19,12 +19,14 @@ void RoboticsBP_Init()
     m3 = DRV8800(PWM1_0, PC7);
    
     //  Servos
+    /*
     s0 = Servo(PWM0_0);
     s1 = Servo(PWM0_1);
     s2 = Servo(PWM0_2);
     s3 = Servo(PWM0_3);
     s4 = Servo(PWM0_4);
     s5 = Servo(PWM0_5);
+    */
 
 }
 
