@@ -632,13 +632,17 @@ int main(void)
     UART_Enable(UART0);
     setbuf(stdout, NULL);
 
+    printf("1");
     //  I2C0
     I2C_Init(I2C0);
     I2C_Enable(I2C0);
 
-    //  PWM1
-    //PWM_Init(PWM0, 50);
+    //  PWM0/1
+    printf("2");
+    PWM_Init(PWM0, 50);
+    printf("3");
     PWM_Init(PWM1, 1000);
+    printf("4");
     PWM_Enable(rLED);
     PWM_Enable(gLED);
     PWM_Enable(bLED);
@@ -649,7 +653,6 @@ int main(void)
 
     // Init Robotics BoosterPack
     RoboticsBP_Init();
-
 
     // NVIC
     IntMasterEnable();

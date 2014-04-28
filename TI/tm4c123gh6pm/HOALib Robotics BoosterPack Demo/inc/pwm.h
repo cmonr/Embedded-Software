@@ -63,7 +63,7 @@ typedef struct
 
     unsigned char clkDiv;
     unsigned long freq;
-    unsigned long period;
+    unsigned long reload;
 
     bool isInit;
 } tPWM;

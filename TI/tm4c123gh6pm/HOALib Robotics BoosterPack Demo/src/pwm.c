@@ -45,34 +45,84 @@ unsigned long pwmClkDiv[7] =
 tPWM_ERR PWM_Init(tPWM* pwm, unsigned long freq)
 {
     unsigned char div = 0;
-    unsigned long reload;
+    unsigned long tmp_reload;
+    volatile unsigned char i;
     
     // Check if object already exists
     if (pwm -> isInit == true)
         return PWM_IS_INITIALIZED;
-	
-    // Find best clk div for PWM periphs
-    reload = SysCtlClockGet() / freq;
-    //   Find smallest clk div
-    for(div=0; (reload >> div) > ((1 <<16)-1); div++)
+
+        
+    // Both PWM Peripherals share a single clock which means
+    //  that if two different frequencies are used, the smallest
+    //  clock divisor needs to be used.
+
+    // Reload value needed for desired freq
+    tmp_reload = SysCtlClockGet() / freq;
+
+    // Find the smallest clock divider needed for reload value
+    //  Aka, what divisor is needed to make relaod value fit
+    //  within 16 bit PWM Reload register?
+    for(div=0; (tmp_reload >> div) > ((1 << 16)-1); div++)
         if (div == 6)
+            // Reload value needed cannot be divided to fit within
+            //  16 bits, and/or system clock is too fast
             return PWM_FREQ_TOO_LOW;
 
-    pwm -> clkDiv = div;
 
-    //   Check other PWM freq
-    /*for(i=0; i<2; i++)
+    // Get largest divisor needed for clocking both PWM peripherals
+    for(i=0; i<2; i++)
     {
-        if ((reload >> (_pwm[i].clkDiv)) < PWM_MIN_RESOLUTION)
-            return PWM_INSUFFICIENT_RESOLUTION; 
-        
-        // Check for highest divider
-        if (_pwm[i].clkDiv > div)
-            div = _pwm[i].clkDiv;
-    }*/
-    
+        // Only care about initialized modules
+        if (_pwm[i].isInit == true)
+        {
+            // Current divisor is smaller than others
+            if (div < _pwm[i].clkDiv)
+                div = _pwm[i].clkDiv;
+        }
+    }
+
+    // Update other PWM peripherals if able
+    for(i=0; i<2; i++)
+    {
+        if (_pwm[i].isInit == true)
+        {
+            // Make sure other PWM peripherals can
+            //  maintain a reasonable resolution
+            if (((_pwm[i].reload) >> div) < PWM_MIN_RESOLUTION)
+                // Well, shit.
+                return PWM_INSUFFICIENT_RESOLUTION;
+
+            // Update other PWM's divisor and reload values
+            _pwm[i].reload = (((_pwm[i].reload + 1 + 2) << _pwm[i].clkDiv) >> div) - 1 - 2;
+            _pwm[i].clkDiv = div;
+
+
+            // Disable PWM generators before configuring them
+            PWMGenDisable(_pwm[i].base, PWM_GEN_0);
+            PWMGenDisable(_pwm[i].base, PWM_GEN_1);
+            PWMGenDisable(_pwm[i].base, PWM_GEN_2);
+            PWMGenDisable(_pwm[i].base, PWM_GEN_3);
+
+            // Update PWM generators
+            PWMGenPeriodSet(_pwm[i].base, PWM_GEN_0, _pwm[i].reload);
+            PWMGenPeriodSet(_pwm[i].base, PWM_GEN_1, _pwm[i].reload);
+            PWMGenPeriodSet(_pwm[i].base, PWM_GEN_2, _pwm[i].reload);
+            PWMGenPeriodSet(_pwm[i].base, PWM_GEN_3, _pwm[i].reload);
+            
+            // Enable generators again
+            PWMGenEnable(_pwm[i].base, PWM_GEN_0);
+            PWMGenEnable(_pwm[i].base, PWM_GEN_1);
+            PWMGenEnable(_pwm[i].base, PWM_GEN_2);
+            PWMGenEnable(_pwm[i].base, PWM_GEN_3);
+        }
+    }
+
     // Local Variables
+    pwm -> clkDiv = div;
     pwm -> freq = freq;
+
+    
 
     // Power PWM Peripheral
     SysCtlPeripheralEnable(pwm -> periph);
@@ -84,11 +134,11 @@ tPWM_ERR PWM_Init(tPWM* pwm, unsigned long freq)
     PWMOutputState(pwm -> base, 0xFF, false);
 
     //   Set all generator periods
-    pwm -> period = (reload >> div) - 1 - 2;
-    PWMGenPeriodSet(pwm -> base, PWM_GEN_0, pwm -> period);
-    PWMGenPeriodSet(pwm -> base, PWM_GEN_1, pwm -> period);
-    PWMGenPeriodSet(pwm -> base, PWM_GEN_2, pwm -> period);
-    PWMGenPeriodSet(pwm -> base, PWM_GEN_3, pwm -> period);
+    pwm -> reload = (tmp_reload >> div) - 1 - 2;
+    PWMGenPeriodSet(pwm -> base, PWM_GEN_0, pwm -> reload);
+    PWMGenPeriodSet(pwm -> base, PWM_GEN_1, pwm -> reload);
+    PWMGenPeriodSet(pwm -> base, PWM_GEN_2, pwm -> reload);
+    PWMGenPeriodSet(pwm -> base, PWM_GEN_3, pwm -> reload);
 
     //   Set all generator modes
     PWMGenConfigure(pwm -> base, PWM_GEN_0, PWM_GEN_MODE_DOWN);
@@ -110,7 +160,7 @@ tPWM_ERR PWM_Init(tPWM* pwm, unsigned long freq)
 
 void PWM_Set(tPWM* pwm, unsigned char pin_ndx, float duty)
 {
-    PWMPulseWidthSet(pwm -> base, pwm -> pins[pin_ndx].pwm_out, (pwm -> period) * duty + 1);
+    PWMPulseWidthSet(pwm -> base, pwm -> pins[pin_ndx].pwm_out, (pwm -> reload) * duty + 1);
 }
 
 void PWM_Invert(tPWM* pwm, unsigned char pin_ndx, bool inv)
