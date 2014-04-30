@@ -63,6 +63,8 @@ extern tUART _uart[8];
 
 void UART_Init( tUART* );
 
+void UART_SetBaud( tUART*, unsigned int );
+
 void UART_WriteChar( tUART*, unsigned char );
 void UART_WriteStr( tUART*, unsigned char* );
 void UART_Write( tUART*, unsigned char*, unsigned long );

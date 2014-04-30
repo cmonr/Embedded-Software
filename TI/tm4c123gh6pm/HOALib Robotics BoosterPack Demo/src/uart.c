@@ -35,6 +35,11 @@ void UART_Init(tUART* uart)
     uart -> isInit = true;
 }
 
+void UART_SetBaud(tUART* uart, unsigned int baud)
+{
+    UARTConfigSetExpClk(uart -> base, SysCtlClockGet(), baud, UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE );
+}
+
 void UART_Enable(tUART* uart)
 {
     // Enable Pin Port

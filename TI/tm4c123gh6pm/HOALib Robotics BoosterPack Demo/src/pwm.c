@@ -98,23 +98,11 @@ tPWM_ERR PWM_Init(tPWM* pwm, unsigned long freq)
             _pwm[i].clkDiv = div;
 
 
-            // Disable PWM generators before configuring them
-            PWMGenDisable(_pwm[i].base, PWM_GEN_0);
-            PWMGenDisable(_pwm[i].base, PWM_GEN_1);
-            PWMGenDisable(_pwm[i].base, PWM_GEN_2);
-            PWMGenDisable(_pwm[i].base, PWM_GEN_3);
-
             // Update PWM generators
             PWMGenPeriodSet(_pwm[i].base, PWM_GEN_0, _pwm[i].reload);
             PWMGenPeriodSet(_pwm[i].base, PWM_GEN_1, _pwm[i].reload);
             PWMGenPeriodSet(_pwm[i].base, PWM_GEN_2, _pwm[i].reload);
             PWMGenPeriodSet(_pwm[i].base, PWM_GEN_3, _pwm[i].reload);
-            
-            // Enable generators again
-            PWMGenEnable(_pwm[i].base, PWM_GEN_0);
-            PWMGenEnable(_pwm[i].base, PWM_GEN_1);
-            PWMGenEnable(_pwm[i].base, PWM_GEN_2);
-            PWMGenEnable(_pwm[i].base, PWM_GEN_3);
         }
     }
 
@@ -128,11 +116,10 @@ tPWM_ERR PWM_Init(tPWM* pwm, unsigned long freq)
     SysCtlPeripheralEnable(pwm -> periph);
 
     // Configure PWM
+    if (SysCtlPWMClockGet() != pwmClkDiv[0])
+        SysCtlPWMClockSet(pwmClkDiv[0]);
     SysCtlPWMClockSet(pwmClkDiv[div]);
     
-    //   Disable All Outputs
-    PWMOutputState(pwm -> base, 0xFF, false);
-
     //   Set all generator periods
     pwm -> reload = (tmp_reload >> div) - 1 - 2;
     PWMGenPeriodSet(pwm -> base, PWM_GEN_0, pwm -> reload);
@@ -151,6 +138,9 @@ tPWM_ERR PWM_Init(tPWM* pwm, unsigned long freq)
     PWMGenEnable(pwm -> base, PWM_GEN_1);
     PWMGenEnable(pwm -> base, PWM_GEN_2);
     PWMGenEnable(pwm -> base, PWM_GEN_3);
+
+    //   Disable All Outputs
+    PWMOutputState(pwm -> base, 0xFF, false);
 
     // Initialization completed
     pwm -> isInit = true;

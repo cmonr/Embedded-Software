@@ -593,10 +593,10 @@ void parseCmd()
     memset(cmdBuff, 0, 32);
 }
 
-void UART0_RX_IRQ()
+void UART1_RX_IRQ()
 {
     // Read cahracter
-    unsigned char data = UART_ReadChar(UART0);
+    unsigned char data = UART_ReadChar(UART1);
 
     buff[buffptr] = data;
     buffptr++;
@@ -615,6 +615,13 @@ void UART0_RX_IRQ()
        // Parse command
        parseCmd();
     }
+    
+    //UART_WriteChar(UART0, UART_ReadChar(UART1));
+}
+
+void UART0_RX_IRQ()
+{
+    UART_WriteChar(UART1, UART_ReadChar(UART0));
 }
 
 
@@ -625,24 +632,25 @@ int main(void)
 
 
     // Init peripherals
-    //  UART0
-    UART_Init(UART0);
+    //  UART0/1
+    /*UART_Init(UART0);
     UART_SetIRQ(UART0, UART_RX_IRQ, &UART0_RX_IRQ);
     UART_IntEnable(UART0, UART_RX_IRQ);
-    UART_Enable(UART0);
+    UART_Enable(UART0);*/
+
+    UART_Init(UART1);
+    UART_SetIRQ(UART1, UART_RX_IRQ, &UART1_RX_IRQ);
+    UART_IntEnable(UART1, UART_RX_IRQ);
+    UART_Enable(UART1);
     setbuf(stdout, NULL);
 
-    printf("1");
     //  I2C0
     I2C_Init(I2C0);
     I2C_Enable(I2C0);
 
     //  PWM0/1
-    printf("2");
     PWM_Init(PWM0, 50);
-    printf("3");
     PWM_Init(PWM1, 1000);
-    printf("4");
     PWM_Enable(rLED);
     PWM_Enable(gLED);
     PWM_Enable(bLED);
