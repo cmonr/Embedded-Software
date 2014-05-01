@@ -665,6 +665,11 @@ int main(void)
     // NVIC
     IntMasterEnable();
 
+    // As soon as UART1 IRW is enabled, a character is
+    //  incorrectly received. Correct the issue by simply
+    //   resetting the buffer pointer.
+    buffptr = 0;
+
 
 
     /*

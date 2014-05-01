@@ -11,6 +11,8 @@
 #define PRINTF_UART_TX UART1
 #define PRINTF_UART_RX UART1
 
+#define SILENT
+
 char *heap_end = 0;
 
 caddr_t _sbrk(unsigned int incr)
@@ -73,7 +75,9 @@ int _write(int file, char *ptr, unsigned int len)
 {
     unsigned int i;
     for(i = 0; i < len; i++){
+        #ifndef SILENT
         UART_WriteChar(PRINTF_UART_TX, ptr[i]);
+        #endif
     }
     return i;
 }
