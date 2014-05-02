@@ -64,19 +64,12 @@ void Crawler::crawlForward(void) {
     frontRight.setKSteps(.5, 1, 1, .5);
     frontRight.setHSteps(1, 1, 0, 0);
     
-    Leg backLeft(&servos[1], &servos[0], 2);
-    backLeft.setKSteps(.5, 1, 1, .5);
-    backLeft.setHSteps(0, 0, 1, 1);
-    
-    Leg backRight(&servos[3], &servos[2]);
-    backRight.setKSteps(.5, 1, 1, .5);
-    backRight.setHSteps(1, 1, 0, 0);
-    
     for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 4; j++) {
+            hservos[0].set(i/10.0);
+        }
         frontLeft.step();
         frontRight.step();
-        backLeft.step();
-        backRight.step();
         delay(stepDelay);
     }
     
