@@ -14,39 +14,47 @@
 #include <driverlib/sysctl.h>
 
 #include "Crawler.h"
-#include "LegKinds.h"
+#include "Leg.h"
 
 Crawler::Crawler()
-: NUM_SERVOS(sizeof(servos)/sizeof(SoftServo)) 
+: NUM_SERVOS(sizeof(servos)/sizeof(SoftServo)), stepDelay(0.1)
 {
     // Initialize Soft Servos
     initSoftServos();
 
     servos[0] = SoftServo(GPIO_PORTD_BASE, GPIO_PIN_2);
-    servos[1] = SoftServo(GPIO_PORTD_BASE, GPIO_PIN_3);
-    servos[2] = SoftServo(GPIO_PORTE_BASE, GPIO_PIN_0);
+    servos[1] = SoftServo(GPIO_PORTE_BASE, GPIO_PIN_0);
+
+    servos[2] = SoftServo(GPIO_PORTD_BASE, GPIO_PIN_3);
     servos[3] = SoftServo(GPIO_PORTE_BASE, GPIO_PIN_1);
     
     // Attach SoftServo Objects to SoftServo Generator
     for (int i = 0; i < NUM_SERVOS; i++) {
+    //for (int i = 2; i < 4; i++) {
         attachSoftServo(&servos[i]);
     }   
 
     // Cascase Servo Initalization
     for (int i = 0; i < NUM_SERVOS; i++) {
+    //for (int i = 2; i < 4; i++) {
         servos[i].enable();
         delay(0.25);
     }
 }
 
 void Crawler::crawlForward(void) {
-    LeftLeg frontLeft(&servos[0], &servos[2]);
-    RightLeg frontRight(&servos[1], &servos[3]);
+    Leg frontLeft(&servos[1], &servos[0], 2);
+    frontLeft.setKSteps(.5, 1, 1, .5);
+    frontLeft.setHSteps(0, 0, 1, 1);
+    
+    Leg frontRight(&servos[3], &servos[2]);
+    frontRight.setKSteps(.5, 1, 1, .5);
+    frontRight.setHSteps(1, 1, 0, 0);
     
     for (int i = 0; i < 40; i++) {
         frontLeft.step();
         frontRight.step();
-        delay(1.0);
+        delay(stepDelay);
     }
     
     for (int i = 0; i < NUM_SERVOS; i++) {
