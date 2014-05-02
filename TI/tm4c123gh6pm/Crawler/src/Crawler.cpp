@@ -17,14 +17,27 @@
 #include "Leg.h"
 
 Crawler::Crawler()
-: NUM_SERVOS(sizeof(servos)/sizeof(SoftServo)), stepDelay(0.1)
+: NUM_SERVOS(sizeof(servos)/sizeof(SoftServo)), stepDelay(0.25)
 {
+    initServos();
+
+    hservos[0] = Servo(PWM_OUT_0, PWM_OUT_0_BIT);
+    hservos[1] = Servo(PWM_OUT_1, PWM_OUT_1_BIT);
+    hservos[2] = Servo(PWM_OUT_2, PWM_OUT_2_BIT);
+    hservos[3] = Servo(PWM_OUT_3, PWM_OUT_3_BIT);
+
+    // Cascade Servo Initalization
+    //  Limit sudden power draw
+    for (int i = 0; i < NUM_SERVOS; i++) {
+        hservos[i].enable();
+        delay(0.25);
+    }
+    
     // Initialize Soft Servos
     initSoftServos();
 
     servos[0] = SoftServo(GPIO_PORTD_BASE, GPIO_PIN_2);
     servos[1] = SoftServo(GPIO_PORTE_BASE, GPIO_PIN_0);
-
     servos[2] = SoftServo(GPIO_PORTD_BASE, GPIO_PIN_3);
     servos[3] = SoftServo(GPIO_PORTE_BASE, GPIO_PIN_1);
     
@@ -51,14 +64,25 @@ void Crawler::crawlForward(void) {
     frontRight.setKSteps(.5, 1, 1, .5);
     frontRight.setHSteps(1, 1, 0, 0);
     
-    for (int i = 0; i < 40; i++) {
+    Leg backLeft(&servos[1], &servos[0], 2);
+    backLeft.setKSteps(.5, 1, 1, .5);
+    backLeft.setHSteps(0, 0, 1, 1);
+    
+    Leg backRight(&servos[3], &servos[2]);
+    backRight.setKSteps(.5, 1, 1, .5);
+    backRight.setHSteps(1, 1, 0, 0);
+    
+    for (int i = 0; i < 10; i++) {
         frontLeft.step();
         frontRight.step();
+        backLeft.step();
+        backRight.step();
         delay(stepDelay);
     }
     
     for (int i = 0; i < NUM_SERVOS; i++) {
         servos[i].disable();
+        hservos[i].disable();
     }
 }
 

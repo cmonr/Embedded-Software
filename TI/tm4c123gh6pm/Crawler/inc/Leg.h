@@ -1,6 +1,5 @@
 #pragma once
 
-#include "servo.h"
 #include "softservo.h"
 
 #define NUM_STEPS 4

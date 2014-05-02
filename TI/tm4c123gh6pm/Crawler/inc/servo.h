@@ -6,6 +6,7 @@ class Servo
         unsigned int _pwm_period;
 
         Servo ( unsigned int, unsigned int );
+        Servo () {};
 
         void set( float );
         void setLimits( float, float );
