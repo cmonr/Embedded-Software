@@ -12,7 +12,9 @@ Servo::Servo(unsigned int pwm_out, unsigned int pwm_out_bit)
 {
     _pwm_out = pwm_out;
     _pwm_out_bit = pwm_out_bit;
-    _pwm_period = SysCtlClockGet() / 64 / 50 - 1;
+    //_pwm_period = SysCtlClockGet() / 64 / 50 - 1;
+    _pwm_width = SysCtlClockGet() * (.0021 - .0009);
+    _pwm_offset = SysCtlClockGet() * .0009 - 1;
 
     setLimits(0, 1);
 }
@@ -33,7 +35,8 @@ void Servo::set(float duty)
     duty = _offset + duty * _range;
     
     // Set PWM signal
-    PWMPulseWidthSet(PWM0_BASE, _pwm_out, _pwm_period * duty / 8.0);
+    //PWMPulseWidthSet(PWM0_BASE, _pwm_out, _pwm_period * duty / 8.0);
+    PWMPulseWidthSet(PWM0_BASE, _pwm_out, (_pwm_width * duty + _pwm_offset)/64);
 }
 
 void Servo::setLimits(float min, float max)

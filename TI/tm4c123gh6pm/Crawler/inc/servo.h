@@ -3,7 +3,9 @@
 class Servo
 {
     public:
-        unsigned int _pwm_period;
+        //unsigned int _pwm_period;
+        unsigned int _pwm_width;
+        unsigned int _pwm_offset;
 
         Servo ( unsigned int, unsigned int );
         Servo () {};

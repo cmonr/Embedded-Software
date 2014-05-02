@@ -1,9 +1,15 @@
 #include "Leg.h"
 
 void Leg::step(void) {
-    knee->set(ksteps[index]);
-    hip->set(hsteps[index]);
-    index = (index+1)%NUM_STEPS;
+    if (knee && hip) {
+        knee->set(ksteps[index]);
+        hip->set(hsteps[index]);
+    } else if (hknee && hhip) {
+        hknee->set(ksteps[index]);
+        hhip->set(hsteps[index]);
+    }
+        
+    index = (index + 1) % NUM_STEPS;
 }
 
 void Leg::setKSteps(float k1, float k2, float k3, float k4) {
