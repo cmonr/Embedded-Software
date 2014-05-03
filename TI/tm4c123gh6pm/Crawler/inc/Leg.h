@@ -2,20 +2,24 @@
 
 #include "softservo.h"
 #include "servo.h"
+#include "CubicStepper.h"
 
 #define NUM_STEPS 4
+#define NUM_SUB_STEPS 100
 
 class Leg {
 protected:
   SoftServo* knee;
   SoftServo* hip;
-
-public:
   Servo* hknee;
   Servo* hhip;
+  int index;
   float ksteps[NUM_STEPS];
   float hsteps[NUM_STEPS];
-  int index;
+  CubicStepper ksteppers[NUM_STEPS];
+  CubicStepper hsteppers[NUM_STEPS];
+
+public:
   Leg(SoftServo* knee, SoftServo* hip, int phase = 0)
   : knee(knee), 
     hip(hip), 
@@ -33,6 +37,5 @@ public:
   void step();
   void setKSteps(float, float, float, float);
   void setHSteps(float, float, float, float);
-  void move(float, float);
 };
 

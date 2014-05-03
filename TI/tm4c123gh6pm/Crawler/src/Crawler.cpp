@@ -17,7 +17,7 @@
 #include "Leg.h"
 
 Crawler::Crawler()
-: NUM_SERVOS(sizeof(servos)/sizeof(SoftServo)), stepDelay(1.0)
+: NUM_SERVOS(sizeof(servos)/sizeof(SoftServo)), stepDelay(0.01)
 {
     initServos();
 
