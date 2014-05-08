@@ -83,7 +83,7 @@ void parseCmd()
                             PWM_Set(gLED, 0);
                             PWM_Set(bLED, 0);
 
-                            printf(" All LEDs enabled\r\n All LEDs set to  0%%\r\n");
+                            //printf(" All LEDs enabled\r\n All LEDs set to  0%%\r\n");
                             break;
 
                         case 'd':   // Disable LEDs
@@ -92,7 +92,7 @@ void parseCmd()
                             PWM_Disable(gLED);
                             PWM_Disable(bLED);
 
-                            printf(" All LEDs disabled\r\n");
+                            //printf(" All LEDs disabled\r\n");
                             break;
 
                         case '=':   // Set LEDs
@@ -102,7 +102,7 @@ void parseCmd()
                             // Check value range
                             if (value > 1 || value < 0 )
                             {
-                                printf("Invalid led value: %s\r\n", cmdBuff);
+                                //printf("Invalid led value: %s\r\n", cmdBuff);
                                 break;
                             }
                             
@@ -111,12 +111,12 @@ void parseCmd()
                             PWM_Set(gLED, value);
                             PWM_Set(bLED, value);
 
-                            printf(" LEDs set to % 2d%%\r\n", (unsigned char) (value*100));
+                            //printf(" LEDs set to % 2d%%\r\n", (unsigned char) (value*100));
                             break;
 
 
-                        default:
-                            printf("Invalid LED command: %s\r\n", cmdBuff);
+                        //default:
+                            //printf("Invalid LED command: %s\r\n", cmdBuff);
                             
                     }
                     break;
@@ -132,21 +132,21 @@ void parseCmd()
                                 PWM_Enable(rLED);
                                 PWM_Set(rLED, 0);
 
-                                printf(" Red LED enabled\r\n Red LED set to  0%%\r\n");
+                                //printf(" Red LED enabled\r\n Red LED set to  0%%\r\n");
                             }
                             else if (cmdBuff[1] == 'g')
                             {
                                 PWM_Enable(gLED);
                                 PWM_Set(gLED, 0);
                                
-                                printf(" Green LED enabled\r\n Green LED set to  0%%\r\n");
+                                //printf(" Green LED enabled\r\n Green LED set to  0%%\r\n");
                             }
                             else
                             {
                                 PWM_Enable(bLED);
                                 PWM_Set(bLED, 0);
                                
-                                printf(" Blue LED enabled\r\n Blue LED set to  0%%\r\n");
+                                //printf(" Blue LED enabled\r\n Blue LED set to  0%%\r\n");
                             }
 
                             break;
@@ -157,19 +157,19 @@ void parseCmd()
                             {
                                 PWM_Disable(rLED);
 
-                                printf(" Red LED disabled\r\n");
+                                //printf(" Red LED disabled\r\n");
                             }
                             else if (cmdBuff[1] == 'g')
                             {
                                 PWM_Disable(gLED);
                                
-                                printf(" Green LED disabled\r\n");
+                                //printf(" Green LED disabled\r\n");
                             }
                             else
                             {
                                 PWM_Disable(bLED);
                                
-                                printf(" Blue LED disabled\r\n");
+                                //printf(" Blue LED disabled\r\n");
                             }
 
                             break;
@@ -181,7 +181,7 @@ void parseCmd()
                             // Check value range
                             if (value > 1 || value < 0 )
                             {
-                                printf("Invalid led value: %s\r\n", cmdBuff);
+                                //printf("Invalid led value: %s\r\n", cmdBuff);
                                 break;
                             }
                             
@@ -190,32 +190,32 @@ void parseCmd()
                             {
                                 PWM_Set(rLED, value);
 
-                                printf(" Red LED set to % 2d%%\r\n", (unsigned char) (value * 100));
+                                //printf(" Red LED set to % 2d%%\r\n", (unsigned char) (value * 100));
                             }
                             else if (cmdBuff[1] == 'g')
                             {
                                 PWM_Set(gLED, value);
                                
-                                printf(" Green LED set to % 2d%%\r\n", (unsigned char) (value * 100));
+                                //printf(" Green LED set to % 2d%%\r\n", (unsigned char) (value * 100));
                             }
                             else
                             {
                                 PWM_Set(bLED, value);
                                
-                                printf(" Blue LED set to % 2d%%\r\n", (unsigned char) (value * 100));
+                                //printf(" Blue LED set to % 2d%%\r\n", (unsigned char) (value * 100));
                             }
 
                             break;
 
 
-                        default:
-                            printf("Invalid LED command: %s\r\n", cmdBuff);
+                        //default:
+                            //printf("Invalid LED command: %s\r\n", cmdBuff);
                             
                     }
 
                     break;
-                default:
-                    printf("Invalid LED index: %s\r\n", cmdBuff);
+                //default:
+                    //printf("Invalid LED index: %s\r\n", cmdBuff);
 
             }
             break;
@@ -234,13 +234,13 @@ void parseCmd()
                         case 'e':   // Enable Motors
                         case 'E':
                             Motors_Enable();
-                            printf(" All motors enabled\r\n");
+                            //printf(" All motors enabled\r\n");
                             break;
 
                         case 'd':   // Disable Motors
                         case 'D':
                             Motors_Disable();
-                            printf(" All motors disabled\r\n");
+                            //printf(" All motors disabled\r\n");
                             break;
 
                         case 'i':   // Invert Motors
@@ -249,7 +249,7 @@ void parseCmd()
                             m1.invert(); 
                             m2.invert(); 
                             m3.invert(); 
-                            printf(" All motors inverted\r\n All motors set to  0%%\r\n");
+                            //printf(" All motors inverted\r\n All motors set to  0%%\r\n");
                             break;
 
                         case 't':   // Throttle Motors
@@ -260,14 +260,14 @@ void parseCmd()
 
                             if (sscanf(&cmdBuff[3], "=%f", &value) != 1)
                             {
-                                printf("Invalid motor trottle value: %s\r\n", cmdBuff);
+                                //printf("Invalid motor trottle value: %s\r\n", cmdBuff);
                                 break;
                             }*/
 
                             // Check throttle value range
                             if (value > 1 || value < 0)
                             { 
-                                printf("Invalid motor throttle value: %s\r\n", cmdBuff);
+                                //printf("Invalid motor throttle value: %s\r\n", cmdBuff);
                                 break;
                             }
                             
@@ -277,7 +277,7 @@ void parseCmd()
                             m2.throttle(value);
                             m3.throttle(value);
 
-                            printf(" All motors throttled to % 2d%%\r\n All motors set to 0%%", (unsigned char) (value*100));
+                            //printf(" All motors throttled to % 2d%%\r\n All motors set to 0%%", (unsigned char) (value*100));
                             break;
 
                         case '=':   // Set Motors
@@ -286,14 +286,14 @@ void parseCmd()
                             /* 
                             if (sscanf(&cmdBuff[2], "=%f", &value) != 1)
                             {
-                                printf("Invalid motor value: %s\r\n", cmdBuff);
+                                //printf("Invalid motor value: %s\r\n", cmdBuff);
                                 break;
                             }*/
 
                             // Check set value range
                             if (value > 1 || value < -1)
                             {
-                                printf("Invalid motor value: %s\r\n", cmdBuff);
+                                //printf("Invalid motor value: %s\r\n", cmdBuff);
                                 break;
                             } 
                             
@@ -303,11 +303,11 @@ void parseCmd()
                             m2.set(value);
                             m3.set(value);
 
-                            printf(" All motors set to % 2d%%\r\n", (unsigned char) (value*100));
+                            //printf(" All motors set to % 2d%%\r\n", (unsigned char) (value*100));
                             break;
 
-                        default:
-                            printf("Invalid motor command: %s\r\n", cmdBuff);
+                        //default:
+                            //printf("Invalid motor command: %s\r\n", cmdBuff);
                     }
                     break; 
 
@@ -323,20 +323,20 @@ void parseCmd()
                         case 'E':
                             // TODO 
 
-                            printf(" Motor %d enabled\r\n", ndx);
+                            //printf(" Motor %d enabled\r\n", ndx);
                             break;
 
                         case 'd':   // Disable Motor
                         case 'D':
                             // TODO 
 
-                            printf(" Motor %d disabled\r\n", ndx);
+                            //printf(" Motor %d disabled\r\n", ndx);
                             break;
 
                         case 'i':   // Invert Motor(s)
                         case 'I':
                             motors[ndx] -> invert();
-                            printf(" Motor %d inverted\r\n Motor %d set to  0%%\r\n", ndx, ndx);
+                            //printf(" Motor %d inverted\r\n Motor %d set to  0%%\r\n", ndx, ndx);
                             break;
 
                         case 't':   // Throttle Motor(s)
@@ -346,21 +346,21 @@ void parseCmd()
                             /*
                             if (sscanf(&cmdBuff[3], "=%f", &value) != 1)
                             {
-                                printf("Invalid motor trottle value: %s\r\n", cmdBuff);
+                                //printf("Invalid motor trottle value: %s\r\n", cmdBuff);
                                 break;
                             }*/
 
                             // Check throttle value range
                             if (value > 1 || value < 0)
                             {
-                                printf("Invalid motor throttle value: %s\r\n", cmdBuff);
+                                //printf("Invalid motor throttle value: %s\r\n", cmdBuff);
                                 break;
                             }
                             
                             // Throttle motors
                             motors[ndx] -> throttle(value);
 
-                            printf(" Motor %d throttled to % 2d%%\r\n Mmotor %d set to 0%%", (unsigned char) (value*100), ndx, ndx);
+                            //printf(" Motor %d throttled to % 2d%%\r\n Mmotor %d set to 0%%", (unsigned char) (value*100), ndx, ndx);
                             break;
 
                         case '=':   // Set Motor
@@ -369,30 +369,30 @@ void parseCmd()
                             /*
                             if (sscanf(&cmdBuff[2], "=%f", &value) != 1)
                             {
-                                printf("Invalid motor value: %s\r\n", cmdBuff);
+                                //printf("Invalid motor value: %s\r\n", cmdBuff);
                                 break;
                             }*/
 
                             // Check throttle value range
                             if (value > 1 || value < -1)
                             {
-                                printf("Invalid motor value: %s\r\n", cmdBuff);
+                                //printf("Invalid motor value: %s\r\n", cmdBuff);
                                 break;
                             }
                             
                             // Throttle motors
                             motors[ndx] -> set(value);
 
-                            printf(" Motor %d set to % 2d%%\r\n", (unsigned char) (value*100), ndx);
+                            //printf(" Motor %d set to % 2d%%\r\n", (unsigned char) (value*100), ndx);
                             break;
 
-                        default:
-                            printf("Invalid motor command: %s\r\n", cmdBuff);
+                        //default:
+                            //printf("Invalid motor command: %s\r\n", cmdBuff);
                     }
                     break;
 
-                default:
-                    printf("Invalid Motor index: %s\r\n", cmdBuff);
+                //default:
+                    //printf("Invalid Motor index: %s\r\n", cmdBuff);
             }
             break;
 
@@ -415,7 +415,7 @@ void parseCmd()
                             s3.enable();
                             s4.enable();
                             s5.enable();
-                            printf(" All servos enabled\r\n");
+                            //printf(" All servos enabled\r\n");
                             break;
 
                         case 'd':   // Disable Servos
@@ -426,7 +426,7 @@ void parseCmd()
                             s3.disable();
                             s4.disable();
                             s5.disable();
-                            printf(" All servos enabled\r\n");
+                            //printf(" All servos enabled\r\n");
                             break;
 
                         case 'i':   // Invert Servos
@@ -437,7 +437,7 @@ void parseCmd()
                             s3.invert();
                             s4.invert();
                             s5.invert();
-                            printf(" All servos inverted\r\n All servos set to 50%%\r\n");
+                            //printf(" All servos inverted\r\n All servos set to 50%%\r\n");
                             break;
 
                         case 'l':   // Limit Servos
@@ -452,14 +452,14 @@ void parseCmd()
                             // Check min limit range
                             if (value > 1 || value < 0)
                             {
-                                printf("Invalid servo min limit: %s\r\n", cmdBuff);
+                                //printf("Invalid servo min limit: %s\r\n", cmdBuff);
                                 break;
                             }
                             
                             // Check max limit range
                             if (max > 1 || max < 0)
                             {
-                                printf("Invalid servo max limit: %s\r\n", cmdBuff);
+                                //printf("Invalid servo max limit: %s\r\n", cmdBuff);
                                 break;
                             }
 
@@ -471,7 +471,7 @@ void parseCmd()
                             s4.limit(value, max);
                             s5.limit(value, max);
 
-                            printf(" All servos limited to % 2d%% and % 2d%%\r\n", (unsigned char) (value*100), (unsigned char) (value * 100));
+                            //printf(" All servos limited to % 2d%% and % 2d%%\r\n", (unsigned char) (value*100), (unsigned char) (value * 100));
                             break;
 
                         case '=':   // Set Servos
@@ -481,7 +481,7 @@ void parseCmd()
                             // Check set value range
                             if (value > 1 || value < 0)
                             {
-                                printf("Invalid motor throttle value: %s\r\n", cmdBuff);
+                                //printf("Invalid motor throttle value: %s\r\n", cmdBuff);
                                 break;
                             }
 
@@ -493,11 +493,11 @@ void parseCmd()
                             s4.set(value);
                             s5.set(value);
 
-                            printf(" All servos set to % 2d%%\r\n", (unsigned char) (value*100));
+                            //printf(" All servos set to % 2d%%\r\n", (unsigned char) (value*100));
                             break;
 
-                        default:
-                            printf("Invalid servo command: %s\r\n", cmdBuff);
+                        //default:
+                            //printf("Invalid servo command: %s\r\n", cmdBuff);
                     }
                     break;
 
@@ -514,19 +514,19 @@ void parseCmd()
                         case 'e':   // Enable Servo
                         case 'E':
                             servos[ndx] -> enable();
-                            printf(" Servo %d enabled\r\n", ndx);
+                            //printf(" Servo %d enabled\r\n", ndx);
                             break;
 
                         case 'd':   // Disable Servos
                         case 'D':
                             servos[ndx] -> disable();
-                            printf(" Servo %d disabled\r\n", ndx);
+                            //printf(" Servo %d disabled\r\n", ndx);
                             break;
 
                         case 'i':   // Invert Servos
                         case 'I':
                             servos[ndx] -> invert();
-                            printf(" Servo %d inverted\r\n Servo %d set to 50%%\r\n", ndx, ndx);
+                            //printf(" Servo %d inverted\r\n Servo %d set to 50%%\r\n", ndx, ndx);
                             break;
 
                         case 'l':   // Limit Servos
@@ -541,21 +541,21 @@ void parseCmd()
                             // Check min limit range
                             if (value > 1 || value < 0)
                             {
-                                printf("Invalid servo min limit: %s\r\n", cmdBuff);
+                                //printf("Invalid servo min limit: %s\r\n", cmdBuff);
                                 break;
                             }
                             
                             // Check max limit range
                             if (max > 1 || max < 0)
                             {
-                                printf("Invalid servo max limit: %s\r\n", cmdBuff);
+                                //printf("Invalid servo max limit: %s\r\n", cmdBuff);
                                 break;
                             }
 
                             // Limit servos
                             servos[ndx] -> limit(value, max);
 
-                            printf(" Servo %d limited to % 2d%% and % 2d%%\r\n", ndx, (unsigned char) (value*100), (unsigned char) (value * 100));
+                            //printf(" Servo %d limited to % 2d%% and % 2d%%\r\n", ndx, (unsigned char) (value*100), (unsigned char) (value * 100));
                             break;
 
                         case '=':   // Set Servos
@@ -565,28 +565,28 @@ void parseCmd()
                             // Check set value range
                             if (value > 1 || value < 0)
                             {
-                                printf("Invalid motor throttle value: %s\r\n", cmdBuff);
+                                //printf("Invalid motor throttle value: %s\r\n", cmdBuff);
                                 break;
                             }
 
                             // Set servos
                             servos[ndx] -> set(value);
 
-                            printf(" Servo %d set to % 2d%%\r\n", ndx, (unsigned char) (value*100));
+                            //printf(" Servo %d set to % 2d%%\r\n", ndx, (unsigned char) (value*100));
                             break;
 
-                        default:
-                            printf("Invalid servo command: %s\r\n", cmdBuff);
+                        //default:
+                            //printf("Invalid servo command: %s\r\n", cmdBuff);
                     }
                     break;
 
-                default:
-                    printf("Invalid Servo index: %s\r\n", cmdBuff);
+                //default:
+                    //printf("Invalid Servo index: %s\r\n", cmdBuff);
             }
             break;
 
-        default:
-            printf("Invalid Motor target: %s\r\n", cmdBuff);
+        //default:
+            //printf("Invalid Motor target: %s\r\n", cmdBuff);
     }   
 
     // Reset CMD Buff
@@ -674,7 +674,7 @@ int main(void)
 
     /*
     // Power On Self Test
-    printf("POST Started");
+    //printf("POST Started");
 
     //  LEDs
     ledTest(rLED);    
@@ -698,7 +698,7 @@ int main(void)
     servoTest(&s4);
     servoTest(&s5);
 
-    printf("\rPOST Completed\r\n\n");*/
+    //printf("\rPOST Completed\r\n\n");*/
 
     while(1);
 }
