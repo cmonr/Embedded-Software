@@ -17,7 +17,7 @@
 #include "Leg.h"
 
 Crawler::Crawler()
-: NUM_SERVOS(sizeof(servos)/sizeof(SoftServo)), stepDelay(.02)
+: NUM_SERVOS(sizeof(servos)/sizeof(SoftServo)), stepDelay(.015*20.0)
 {
     initServos();
 
@@ -56,19 +56,19 @@ Crawler::Crawler()
 }
 
 void Crawler::crawlForward(void) {
-    Leg frontLeft(&servos[1], &servos[0], 3);
+    Leg frontLeft(&servos[1], &servos[0], 3, false);
     frontLeft.setKSteps(.5, 1, 1, .5);
     frontLeft.setHSteps(1, 1, .5, .5);
     
-    Leg frontRight(&servos[3], &servos[2], 1);
+    Leg frontRight(&servos[3], &servos[2], 1, false);
     frontRight.setKSteps(.5, 1, 1, .5);
     frontRight.setHSteps(0, 0, .5, .5);
     
-    Leg backLeft(&hservos[0], &hservos[1], 1);
+    Leg backLeft(&hservos[0], &hservos[1], 1, false);
     backLeft.setKSteps(.5, 0, 0, .5);
     backLeft.setHSteps(.5, .5, 0, 0);
     
-    Leg backRight(&hservos[3], &hservos[2]);
+    Leg backRight(&hservos[3], &hservos[2], 0, false);
     backRight.setKSteps(1, .5, .5, 1);
     backRight.setHSteps(.5, .5, 0, 0);
         
