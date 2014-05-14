@@ -1,7 +1,6 @@
 #pragma once
 
-#include "softservo.h"
-#include "servo.h"
+#include "gservo.h"
 #include "CubicStepper.h"
 
 #define NUM_STEPS 4

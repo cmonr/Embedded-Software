@@ -19,12 +19,12 @@
 Crawler::Crawler()
 : NUM_SERVOS(sizeof(servos)/sizeof(SoftServo)), stepDelay(.015*20.0)
 {
-    initServos();
+    initHardServos();
 
-    hservos[0] = Servo(PWM_OUT_0, PWM_OUT_0_BIT);
-    hservos[1] = Servo(PWM_OUT_1, PWM_OUT_1_BIT);
-    hservos[2] = Servo(PWM_OUT_2, PWM_OUT_2_BIT);
-    hservos[3] = Servo(PWM_OUT_3, PWM_OUT_3_BIT);
+    hservos[0] = HardServo(PWM_OUT_0, PWM_OUT_0_BIT);
+    hservos[1] = HardServo(PWM_OUT_1, PWM_OUT_1_BIT);
+    hservos[2] = HardServo(PWM_OUT_2, PWM_OUT_2_BIT);
+    hservos[3] = HardServo(PWM_OUT_3, PWM_OUT_3_BIT);
 
     // Cascade Servo Initalization
     //  Limit sudden power draw
