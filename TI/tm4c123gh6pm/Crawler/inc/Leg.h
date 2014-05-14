@@ -9,14 +9,13 @@
 class StepAdder {
 protected:
     float* steps;
-    int index;
+    int& numSteps;
 
 public:
-    StepAdder() : steps(0), index(-1) {}
-    StepAdder(float* steps) : steps(steps), index(0) {}
+    StepAdder(float* steps, int& numSteps) : steps(steps), numSteps(numSteps) {}
     StepAdder& operator<<(float step) {
-        if (index < MAX_STEPS) {
-            steps[index++] = step;
+        if (numSteps < MAX_STEPS) {
+            steps[numSteps++] = step;
         }
 
         return *this;
@@ -27,8 +26,10 @@ class Leg {
 protected:
     Servo* knee;
     Servo* hip;
-    int index;
     bool smooth;
+    int index;
+    int numKSteps;
+    int numHSteps;
     float ksteps[MAX_STEPS];
     float hsteps[MAX_STEPS];
     CubicStepper ksteppers[MAX_STEPS];

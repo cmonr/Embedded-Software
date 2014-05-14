@@ -61,7 +61,7 @@ void Crawler::crawlForward(void) {
 
     Leg frontRight(&sservos[3], &sservos[2], 1, false);
     frontRight.kStepAdder << .5 << 1 << 1 << .5;
-    frontRight.hSetpAdder << 0 << 0 << .5 << .5;
+    frontRight.hStepAdder << 0 << 0 << .5 << .5;
     
     Leg backLeft(&hservos[0], &hservos[1], 1, false);
     backLeft.kStepAdder << .5 << 0 << 0 << .5;

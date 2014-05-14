@@ -3,15 +3,16 @@
 Leg::Leg(Servo* knee, Servo* hip, int phase, bool smooth)
 : knee(knee), 
   hip(hip), 
-  smooth(smooth)
+  smooth(smooth),
+  numKSteps(0),
+  numHSteps(0),
+  hStepAdder(StepAdder(hsteps, numHSteps)),
+  kStepAdder(StepAdder(ksteps, numKSteps))
 {
     index = phase;
     if (smooth) {
         index *= NUM_SUB_STEPS;
     }
-
-    hStepAdder = StepAdder(hsteps);
-    kStepAdder = StepAdder(ksteps);
 }
 
 void Leg::step(void) {
