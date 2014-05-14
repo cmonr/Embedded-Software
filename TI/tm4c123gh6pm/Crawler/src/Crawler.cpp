@@ -17,7 +17,7 @@
 #include "Leg.h"
 
 Crawler::Crawler()
-: NUM_SERVOS(sizeof(servos)/sizeof(SoftServo)), stepDelay(.015*20.0)
+: NUM_SERVOS(sizeof(sservos)/sizeof(SoftServo)), stepDelay(.015*20.0)
 {
     initHardServos();
 
@@ -36,31 +36,31 @@ Crawler::Crawler()
     // Initialize Soft Servos
     initSoftServos();
 
-    servos[0] = SoftServo(GPIO_PORTD_BASE, GPIO_PIN_2);
-    servos[1] = SoftServo(GPIO_PORTE_BASE, GPIO_PIN_0);
-    servos[2] = SoftServo(GPIO_PORTD_BASE, GPIO_PIN_3);
-    servos[3] = SoftServo(GPIO_PORTE_BASE, GPIO_PIN_1);
+    sservos[0] = SoftServo(GPIO_PORTD_BASE, GPIO_PIN_2);
+    sservos[1] = SoftServo(GPIO_PORTE_BASE, GPIO_PIN_0);
+    sservos[2] = SoftServo(GPIO_PORTD_BASE, GPIO_PIN_3);
+    sservos[3] = SoftServo(GPIO_PORTE_BASE, GPIO_PIN_1);
     
     // Attach SoftServo Objects to SoftServo Generator
     for (int i = 0; i < NUM_SERVOS; i++) {
     //for (int i = 2; i < 4; i++) {
-        attachSoftServo(&servos[i]);
+        attachSoftServo(&sservos[i]);
     }   
 
     // Cascase Servo Initalization
     for (int i = 0; i < NUM_SERVOS; i++) {
     //for (int i = 2; i < 4; i++) {
-        servos[i].enable();
+        sservos[i].enable();
         delay(0.25);
     }
 }
 
 void Crawler::crawlForward(void) {
-    Leg frontLeft(&servos[1], &servos[0], 3, false);
+    Leg frontLeft(&sservos[1], &sservos[0], 3, false);
     frontLeft.setKSteps(.5, 1, 1, .5);
     frontLeft.setHSteps(1, 1, .5, .5);
     
-    Leg frontRight(&servos[3], &servos[2], 1, false);
+    Leg frontRight(&sservos[3], &sservos[2], 1, false);
     frontRight.setKSteps(.5, 1, 1, .5);
     frontRight.setHSteps(0, 0, .5, .5);
     
@@ -82,7 +82,7 @@ void Crawler::crawlForward(void) {
     }
     
     for (int i = 0; i < NUM_SERVOS; i++) {
-        servos[i].disable();
+        sservos[i].disable();
         hservos[i].disable();
     }
 }

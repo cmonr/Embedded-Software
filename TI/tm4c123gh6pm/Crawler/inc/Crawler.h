@@ -8,7 +8,7 @@
 class Crawler {
 protected:
     HardServo hservos[4];
-    SoftServo servos[4];
+    SoftServo sservos[4];
     int NUM_SERVOS;
     float stepDelay;
 
