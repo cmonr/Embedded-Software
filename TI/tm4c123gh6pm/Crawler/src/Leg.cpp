@@ -1,70 +1,66 @@
 #include "Leg.h"
   
 Leg::Leg(Servo* knee, Servo* hip, int phase, bool smooth)
-: knee(knee), 
-  hip(hip), 
-  smooth(smooth),
-  numKSteps(0),
-  numHSteps(0),
-  hStepAdder(StepAdder(hsteps, numHSteps)),
-  kStepAdder(StepAdder(ksteps, numKSteps))
+: hStepAdder(Stepper(phase, smooth)),
+  kStepAdder(Stepper(phase, smooth)),
+  knee(knee), 
+  hip(hip)
+{}
+
+void Leg::step(void) {
+    knee->set(kStepAdder.step());
+    hip->set(hStepAdder.step());
+}
+
+Stepper::Stepper(int phase, bool smooth)
+: numSteps(0), index(phase), smooth(smooth), initialized(false) 
 {
-    index = phase;
     if (smooth) {
         index *= NUM_SUB_STEPS;
     }
 }
 
-void Leg::step(void) {
-    float kval, hval;
-
-    if (smooth) {
-        kval = ksteppers[index / NUM_SUB_STEPS].f(index % NUM_SUB_STEPS);
-        hval = hsteppers[index / NUM_SUB_STEPS].f(index % NUM_SUB_STEPS);
-        index = (index + 1) % (MAX_STEPS * NUM_SUB_STEPS);
-    } else {
-        kval = ksteps[index];
-        hval = hsteps[index];
-        index = (index + 1) % MAX_STEPS;
+Stepper& Stepper::operator<<(float step) {
+    if (numSteps < MAX_STEPS) {
+        steps[numSteps++] = step;
     }
-    
-    knee->set(kval);
-    hip->set(hval);
+
+    return *this;
 }
 
-void Leg::setKSteps(float k1, float k2, float k3, float k4) {
-    ksteps[0] = k1;
-    ksteps[1] = k2;
-    ksteps[2] = k3;
-    ksteps[3] = k4;
-
+void Stepper::init(void) {
+    initialized = true;
+    
     if (smooth) {
-        for (int i = 0; i < MAX_STEPS - 1; i++) {
-            ksteppers[i] = CubicStepper(ksteps[i], ksteps[i+1], NUM_SUB_STEPS);
+        substepsPerStep = NUM_SUB_STEPS / numSteps;
+
+        for (int i = 0; i < numSteps - 1; i++) {
+            steppers[i] = CubicStepper(steps[i], steps[i + 1], substepsPerStep);
         }
 
-        ksteppers[MAX_STEPS-1] = CubicStepper(
-            ksteps[MAX_STEPS-1], 
-            ksteps[0], 
+        steppers[numSteps - 1] = CubicStepper(
+            steps[numSteps - 1], 
+            steps[0], 
             NUM_SUB_STEPS
             );
     }
 }
 
-void Leg::setHSteps(float h1, float h2, float h3, float h4) {
-    hsteps[0] = h1;
-    hsteps[1] = h2;
-    hsteps[2] = h3;
-    hsteps[3] = h4;
+float Stepper::step(void) {
+    if (!initialized) {
+        init();
+    }
 
-    for (int i = 0; i < MAX_STEPS - 1; i++) {
-        hsteppers[i] = CubicStepper(hsteps[i], hsteps[i+1], NUM_SUB_STEPS);
+    float res;
+
+    if (smooth) {
+        res = steppers[index / substepsPerStep].f(index % substepsPerStep); 
+        index = (index + 1 ) % NUM_SUB_STEPS;
+    } else {
+        res = steps[index];
+        index = (index + 1) % numSteps;
     }
     
-    hsteppers[MAX_STEPS-1] = CubicStepper(
-        hsteps[MAX_STEPS-1], 
-        hsteps[0], 
-        NUM_SUB_STEPS
-        );
+    return res;
 }
 

@@ -6,41 +6,36 @@
 #define MAX_STEPS 10
 #define NUM_SUB_STEPS 20
 
-class StepAdder {
+class Stepper {
 protected:
-    float* steps;
-    int& numSteps;
+    float steps[MAX_STEPS];
+    CubicStepper steppers[MAX_STEPS];
+    int numSteps;
+    int substepsPerStep;
+    int index;
+    bool smooth;
+    bool initialized;
 
 public:
-    StepAdder(float* steps, int& numSteps) : steps(steps), numSteps(numSteps) {}
-    StepAdder& operator<<(float step) {
-        if (numSteps < MAX_STEPS) {
-            steps[numSteps++] = step;
-        }
-
-        return *this;
-    }
+    Stepper(int phase = 0, bool smooth = true);
+    Stepper& operator<<(float step);
+    float step(void);
+    
+protected:
+    void init(void);
 };
 
 class Leg {
+public:
+    Stepper hStepAdder;
+    Stepper kStepAdder;
+
 protected:
     Servo* knee;
     Servo* hip;
-    bool smooth;
-    int index;
-    int numKSteps;
-    int numHSteps;
-    float ksteps[MAX_STEPS];
-    float hsteps[MAX_STEPS];
-    CubicStepper ksteppers[MAX_STEPS];
-    CubicStepper hsteppers[MAX_STEPS];
 
 public:
     Leg(Servo* knee, Servo* hip, int phase = 0, bool smooth = true);
     void step();
-    void setKSteps(float, float, float, float);
-    void setHSteps(float, float, float, float);
-    StepAdder hStepAdder;
-    StepAdder kStepAdder;
 };
 
