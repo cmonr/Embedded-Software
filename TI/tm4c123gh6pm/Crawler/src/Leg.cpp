@@ -12,14 +12,9 @@ void Leg::step(void) {
         hval = hsteps[index];
         index = (index + 1) % NUM_STEPS;
     }
-
-    if (knee && hip) {
-        knee->set(kval);
-        hip->set(hval);
-    } else if (hknee && hhip) {
-        hknee->set(kval);
-        hhip->set(hval);
-    }
+    
+    knee->set(kval);
+    hip->set(hval);
 }
 
 void Leg::setKSteps(float k1, float k2, float k3, float k4) {

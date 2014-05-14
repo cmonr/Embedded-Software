@@ -9,10 +9,9 @@
 
 class Leg {
 protected:
-  SoftServo* knee;
-  SoftServo* hip;
-  Servo* hknee;
-  Servo* hhip;
+  GServo* knee;
+  GServo* hip;
+
   int index;
   bool smooth;
   float ksteps[NUM_STEPS];
@@ -21,21 +20,16 @@ protected:
   CubicStepper hsteppers[NUM_STEPS];
 
 public:
-  Leg(SoftServo* knee, SoftServo* hip, int phase = 0, bool smooth = true)
+  Leg(GServo* knee, GServo* hip, int phase = 0, bool smooth = true)
   : knee(knee), 
     hip(hip), 
-    hknee(0), 
-    hhip(0), 
-    index(phase * NUM_SUB_STEPS),
-    smooth(smooth) {}
-  
-  Leg(Servo* hknee, Servo* hhip, int phase = 0, bool smooth = true)
-  : knee(0), 
-    hip(0), 
-    hknee(hknee),
-    hhip(hhip), 
-    index(phase),
-    smooth(smooth) {}
+    smooth(smooth) 
+  {
+    index = phase;
+    if (smooth) {
+      index *= NUM_SUB_STEPS;
+    }
+  }
   
   void step();
   void setKSteps(float, float, float, float);
