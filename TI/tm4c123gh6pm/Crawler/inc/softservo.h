@@ -1,6 +1,8 @@
 #pragma once
 
-class SoftServo
+#include "gservo.h"
+
+class SoftServo : public GServo
 {
     public:
         // unsigned int _pwm_period;
