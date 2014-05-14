@@ -19,16 +19,7 @@ protected:
   CubicStepper hsteppers[NUM_STEPS];
 
 public:
-  Leg(Servo* knee, Servo* hip, int phase = 0, bool smooth = true)
-  : knee(knee), 
-    hip(hip), 
-    smooth(smooth) 
-  {
-    index = phase;
-    if (smooth) {
-      index *= NUM_SUB_STEPS;
-    }
-  }
+  Leg(Servo* knee, Servo* hip, int phase = 0, bool smooth = true);
   
   void step();
   void setKSteps(float, float, float, float);

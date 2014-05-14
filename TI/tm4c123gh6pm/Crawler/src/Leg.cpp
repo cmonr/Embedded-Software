@@ -1,4 +1,16 @@
 #include "Leg.h"
+  
+
+Leg::Leg(Servo* knee, Servo* hip, int phase, bool smooth)
+: knee(knee), 
+  hip(hip), 
+  smooth(smooth) 
+{
+    index = phase;
+    if (smooth) {
+        index *= NUM_SUB_STEPS;
+    }
+}
 
 void Leg::step(void) {
     float kval, hval;

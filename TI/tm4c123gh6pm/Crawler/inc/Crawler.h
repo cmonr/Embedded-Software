@@ -13,6 +13,6 @@ protected:
     float stepDelay;
 
 public:
-    Crawler();
+    Crawler(float stepDelay = .015*20.0);
     void crawlForward(void);
 };

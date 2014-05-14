@@ -16,9 +16,10 @@
 #include "Crawler.h"
 #include "Leg.h"
 
-Crawler::Crawler()
-: NUM_SERVOS(sizeof(sservos)/sizeof(SoftServo)), stepDelay(.015*20.0)
+Crawler::Crawler(float stepDelay)
+: NUM_SERVOS(sizeof(sservos)/sizeof(SoftServo)), stepDelay(stepDelay)
 {
+    // Initialize hardware servos
     initHardServos();
 
     hservos[0] = HardServo(PWM_OUT_0, PWM_OUT_0_BIT);
@@ -43,13 +44,11 @@ Crawler::Crawler()
     
     // Attach SoftServo Objects to SoftServo Generator
     for (int i = 0; i < NUM_SERVOS; i++) {
-    //for (int i = 2; i < 4; i++) {
         attachSoftServo(&sservos[i]);
     }   
 
     // Cascase Servo Initalization
     for (int i = 0; i < NUM_SERVOS; i++) {
-    //for (int i = 2; i < 4; i++) {
         sservos[i].enable();
         delay(0.25);
     }
