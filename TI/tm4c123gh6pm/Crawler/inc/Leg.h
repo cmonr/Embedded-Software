@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gservo.h"
+#include "servo.h"
 #include "CubicStepper.h"
 
 #define NUM_STEPS 4
@@ -8,8 +8,8 @@
 
 class Leg {
 protected:
-  GServo* knee;
-  GServo* hip;
+  Servo* knee;
+  Servo* hip;
 
   int index;
   bool smooth;
@@ -19,7 +19,7 @@ protected:
   CubicStepper hsteppers[NUM_STEPS];
 
 public:
-  Leg(GServo* knee, GServo* hip, int phase = 0, bool smooth = true)
+  Leg(Servo* knee, Servo* hip, int phase = 0, bool smooth = true)
   : knee(knee), 
     hip(hip), 
     smooth(smooth) 
