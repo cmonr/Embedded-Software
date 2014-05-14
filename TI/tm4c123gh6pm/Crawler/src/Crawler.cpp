@@ -56,21 +56,21 @@ Crawler::Crawler(float stepDelay)
 
 void Crawler::crawlForward(void) {
     Leg frontLeft(&sservos[1], &sservos[0], 3, false);
-    frontLeft.setKSteps(.5, 1, 1, .5);
-    frontLeft.setHSteps(1, 1, .5, .5);
-    
+    frontLeft.kStepAdder << .5 << 1 << 1 << .5;    
+    frontLeft.hStepAdder << 1 << 1 << 0 << .5;    
+
     Leg frontRight(&sservos[3], &sservos[2], 1, false);
-    frontRight.setKSteps(.5, 1, 1, .5);
-    frontRight.setHSteps(0, 0, .5, .5);
+    frontRight.kStepAdder << .5 << 1 << 1 << .5;
+    frontRight.hSetpAdder << 0 << 0 << .5 << .5;
     
     Leg backLeft(&hservos[0], &hservos[1], 1, false);
-    backLeft.setKSteps(.5, 0, 0, .5);
-    backLeft.setHSteps(.5, .5, 0, 0);
-    
+    backLeft.kStepAdder << .5 << 0 << 0 << .5;
+    backLeft.hStepAdder << .5 << .5 << 0 << 0;
+ 
     Leg backRight(&hservos[3], &hservos[2], 0, false);
-    backRight.setKSteps(1, .5, .5, 1);
-    backRight.setHSteps(.5, .5, 0, 0);
-        
+    backRight.kStepAdder << 1 << .5 << .5 << 1;
+    backRight.hStepAdder << .5 << .5 << 0 << 0;
+    
     for (int i = 0; i < NUM_SUB_STEPS*100; i++) {
         frontLeft.step();
         frontRight.step();
