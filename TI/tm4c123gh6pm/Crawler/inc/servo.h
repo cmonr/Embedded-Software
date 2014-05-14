@@ -1,8 +1,7 @@
 #pragma once
 
-class Servo
-{
-  public:
+class Servo {
+public:
     virtual void set( float ) = 0;
     virtual void setLimits( float, float ) = 0;
     virtual void invert( void ) = 0;
