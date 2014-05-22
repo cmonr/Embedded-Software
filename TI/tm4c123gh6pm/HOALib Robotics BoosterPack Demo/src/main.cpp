@@ -535,7 +535,7 @@ void parseCmd()
                             char* endPtr;
                             float max;
 
-                            value = strtof(reinterpret_cast<const char*>(&cmdBuff[4]), &endPtr);
+                            value = strtof(reinterpret_cast<const char*>(&cmdBuff[3]), &endPtr);
                             max = strtof(reinterpret_cast<const char*>(endPtr), NULL);
 
                             // Check min limit range
@@ -560,7 +560,7 @@ void parseCmd()
 
                         case '=':   // Set Servos
                             // Parse set value
-                            value = strtof(reinterpret_cast<const char*>(&cmdBuff[4]), NULL);
+                            value = strtof(reinterpret_cast<const char*>(&cmdBuff[3]), NULL);
 
                             // Check set value range
                             if (value > 1 || value < 0)
@@ -593,6 +593,40 @@ void parseCmd()
     memset(cmdBuff, 0, 32);
 }
 
+void UART0_RX_IRQ()
+{
+    // Read cahracter
+    unsigned char data = UART_ReadChar(UART0);
+
+    buff[buffptr] = data;
+    buffptr++;
+
+    // TODO: Add check for max buffer size
+   
+    // Echo
+    UART_WriteChar(UART0, data);
+
+
+    if (data == CMD_DELIM)
+    {
+       // Copy string into seperate buffer
+       memcpy(&cmdBuff, &buff, 32 * sizeof(char));
+
+       // Zero off buffer
+       memset(buff, 0, 32);
+       buffptr = 0;
+
+       UART_WriteChar(UART0, 'O');
+       UART_WriteChar(UART0, 'K');
+       UART_WriteChar(UART0, '\r');
+       UART_WriteChar(UART0, '\n');
+
+
+       // Parse command
+       parseCmd();
+    }
+}
+
 void UART1_RX_IRQ()
 {
     // Read cahracter
@@ -619,11 +653,6 @@ void UART1_RX_IRQ()
     //UART_WriteChar(UART0, UART_ReadChar(UART1));
 }
 
-void UART0_RX_IRQ()
-{
-    UART_WriteChar(UART1, UART_ReadChar(UART0));
-}
-
 
 int main(void)
 {
@@ -633,10 +662,10 @@ int main(void)
 
     // Init peripherals
     //  UART0/1
-    /*UART_Init(UART0);
+    UART_Init(UART0);
     UART_SetIRQ(UART0, UART_RX_IRQ, &UART0_RX_IRQ);
     UART_IntEnable(UART0, UART_RX_IRQ);
-    UART_Enable(UART0);*/
+    UART_Enable(UART0);
 
     UART_Init(UART1);
     UART_SetIRQ(UART1, UART_RX_IRQ, &UART1_RX_IRQ);

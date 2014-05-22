@@ -9,7 +9,11 @@ Servo::Servo(tPWM* pwm, unsigned char pwm_pin)
     _pwm = pwm;
     _pwm_pin = pwm_pin;
 
-    limit(0, 1);
+    _invert = false;
+
+    limit(0.5/2.5, 2.5/2.5);    // Typical Servo range (in ms)
+
+    set(0.5);
 }
 
 void Servo::set(float duty)
@@ -26,35 +30,26 @@ void Servo::set(float duty)
 
     // Calculate modified duty cycle
     duty = _offset + duty * _range;
-    
+   
     // Set PWM signal
-    PWM_Set(_pwm, _pwm_pin, duty / 8);
+    PWM_Set(_pwm, _pwm_pin, duty / 8.0);
 
 }
 
 void Servo::limit(float min, float max)
 {
-    // Disable servo while configuring
-    //disable();
+    if (max < min)
+         return;    // TODO: Fix this later
 
     // Calculate internal variables
     _offset = min;
-    _range = max-min;
-    
-    // Reset to neutral position 
-    set(0.5);
+    _range = max - min;
 }
 
 void Servo::invert()
 {
-    //Disable servo while configuring
-    //disable();
-
     // Invert servo direction
     _invert = !_invert;
-
-    // Reset to neutral position 
-    set(0.5);
 }
 
 void Servo::enable()

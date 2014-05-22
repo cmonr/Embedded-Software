@@ -94,7 +94,7 @@ tPWM_ERR PWM_Init(tPWM* pwm, unsigned long freq)
                 return PWM_INSUFFICIENT_RESOLUTION;
 
             // Update other PWM's divisor and reload values
-            _pwm[i].reload = (((_pwm[i].reload + 1 + 2) << _pwm[i].clkDiv) >> div) - 1 - 2;
+            _pwm[i].reload = (((_pwm[i].reload + 1 /*+ 2*/) << _pwm[i].clkDiv) >> div) - 1/* - 2*/;
             _pwm[i].clkDiv = div;
 
 
@@ -121,7 +121,7 @@ tPWM_ERR PWM_Init(tPWM* pwm, unsigned long freq)
     SysCtlPWMClockSet(pwmClkDiv[div]);
     
     //   Set all generator periods
-    pwm -> reload = (tmp_reload >> div) - 1 - 2;
+    pwm -> reload = (tmp_reload >> div) - 1/* - 2*/;
     PWMGenPeriodSet(pwm -> base, PWM_GEN_0, pwm -> reload);
     PWMGenPeriodSet(pwm -> base, PWM_GEN_1, pwm -> reload);
     PWMGenPeriodSet(pwm -> base, PWM_GEN_2, pwm -> reload);
@@ -150,7 +150,17 @@ tPWM_ERR PWM_Init(tPWM* pwm, unsigned long freq)
 
 void PWM_Set(tPWM* pwm, unsigned char pin_ndx, float duty)
 {
-    PWMPulseWidthSet(pwm -> base, pwm -> pins[pin_ndx].pwm_out, (pwm -> reload) * duty + 1);
+    if (duty == 0.0)
+        PWMOutputState(pwm -> base, pwm -> pins[pin_ndx].out_bit, false);
+    else
+    {
+        if (duty == 1.0)
+            PWMPulseWidthSet(pwm -> base, pwm -> pins[pin_ndx].pwm_out, pwm -> reload - 2);
+        else
+            PWMPulseWidthSet(pwm -> base, pwm -> pins[pin_ndx].pwm_out, (pwm -> reload) * duty);
+
+        PWMOutputState(pwm -> base, pwm -> pins[pin_ndx].out_bit, true);
+    }
 }
 
 void PWM_Invert(tPWM* pwm, unsigned char pin_ndx, bool inv)
