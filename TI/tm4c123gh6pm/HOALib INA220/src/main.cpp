@@ -60,7 +60,6 @@ int main(void)
     // NVIC
     IntMasterEnable();
 
-
     /*
     // Power On Self Test
     //printf("POST Started");
@@ -89,14 +88,12 @@ int main(void)
 
     //printf("\rPOST Completed\r\n\n");*/
 
-    printf("HI\r\n");
-
     while(1)
     {
         unsigned short voltage = ina220.readVoltage();
-        printf("% .3fv\t", voltage * 0.004);
+        printf("% .3fv\r", voltage * 0.004);
 
-        SysCtlDelay(SysCtlClockGet());
+        SysCtlDelay(SysCtlClockGet()/3/10);
     }
 }
 
