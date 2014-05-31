@@ -1,0 +1,8 @@
+[submodule "TI-fw"]
+	path = TI-fw
+	url = git@github.com:cmonr/TI-fw
+	branch = master
+[submodule "SiLabs"]
+	path = SiLabs
+	url = git@github.com:cmonr/SiLabs-fw
+	branch = master
